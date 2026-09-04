@@ -4,22 +4,39 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 
-# టోకెన్, చాట్ ఐడీల్లో స్పేస్ ఉంటే తొలగించడం
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 CHAT_ID = os.environ.get("CHAT_ID", "").strip()
 
-# నిఫ్టీ 50, క్రిప్టో, పెన్నీ కాయిన్స్, ప్రధాన స్టాక్స్ & పెన్నీ షేర్లు
-ASSETS = {
-    "^NSEI": "Nifty 50 🇮🇳",
-    "BTC-USD": "Bitcoin 🪙",
-    "ETH-USD": "Ethereum 🪙",
-    "DOGE-USD": "Dogecoin (Penny) 🐕",
-    "SHIB-USD": "Shiba Inu (Penny) 🐶",
-    "ADA-USD": "Cardano (Penny) 🪙",
-    "RELIANCE.NS": "Reliance 🏢",
-    "IDEA.NS": "Vodafone Idea (Penny) 📱",
-    "SUZLON.NS": "Suzlon Energy (Penny) ⚡",
-    "YESBANK.NS": "Yes Bank (Penny) 🏦"
+# కేటగిరీల వారీగా విడదీసిన జాబితా
+CATEGORIES = {
+    "🇮🇳 [ నిఫ్టీ 50 టాప్ షేర్లు ]": {
+        "^NSEI": "Nifty 50 (Index)",
+        "RELIANCE.NS": "Reliance",
+        "TCS.NS": "TCS",
+        "HDFCBANK.NS": "HDFC Bank",
+        "INFY.NS": "Infosys",
+        "ICICIBANK.NS": "ICICI Bank",
+        "SBIN.NS": "SBI",
+        "ITC.NS": "ITC"
+    },
+    "⚡ [ భారతీయ పెన్నీ స్టాక్స్ ]": {
+        "IDEA.NS": "Vodafone Idea",
+        "SUZLON.NS": "Suzlon Energy",
+        "YESBANK.NS": "Yes Bank",
+        "SOUTHBANK.NS": "South Indian Bank",
+        "UCOBANK.NS": "UCO Bank"
+    },
+    "🪙 [ టాప్ క్రిప్టో ]": {
+        "BTC-USD": "Bitcoin",
+        "ETH-USD": "Ethereum",
+        "SOL-USD": "Solana"
+    },
+    "🐕 [ క్రిప్టో పెన్నీ కాయిన్స్ ]": {
+        "DOGE-USD": "Dogecoin",
+        "SHIB-USD": "Shiba Inu",
+        "ADA-USD": "Cardano",
+        "PEPE-USD": "Pepe"
+    }
 }
 
 def analyze_asset(symbol):
@@ -31,19 +48,16 @@ def analyze_asset(symbol):
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
 
-        # మూవింగ్ యావరేజెస్ (EMA)
         df['EMA_9'] = df['Close'].ewm(span=9, adjust=False).mean()
         df['EMA_21'] = df['Close'].ewm(span=21, adjust=False).mean()
         df['EMA_50'] = df['Close'].ewm(span=50, adjust=False).mean()
 
-        # RSI లెక్కింపు
         delta = df['Close'].diff()
         gain = (delta.where(delta > 0, 0)).rolling(14).mean()
         loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
         rs = gain / loss
         df['RSI'] = 100 - (100 / (1 + rs))
 
-        # MACD లెక్కింపు
         exp1 = df['Close'].ewm(span=12, adjust=False).mean()
         exp2 = df['Close'].ewm(span=26, adjust=False).mean()
         df['MACD'] = exp1 - exp2
@@ -67,17 +81,20 @@ def analyze_asset(symbol):
     except Exception:
         return None
 
-message_lines = ["📊 DAILY MARKET SIGNALS\n"]
+message_lines = ["📊 DAILY MARKET SIGNALS REPORT\n=======================\n"]
 
-for symbol, name in ASSETS.items():
-    data = analyze_asset(symbol)
-    if data:
-        curr = "$" if "USD" in symbol else "Rs."
-        message_lines.append(f"{name}:\nధర: {curr} {data['price']} | RSI: {data['rsi']}\nసిగ్నల్: {data['signal']}\n")
+for cat_name, assets in CATEGORIES.items():
+    message_lines.append(f"\n{cat_name}")
+    message_lines.append("-----------------------")
+    for symbol, name in assets.items():
+        data = analyze_asset(symbol)
+        if data:
+            curr = "$" if "USD" in symbol else "₹"
+            message_lines.append(f"• {name}: {curr}{data['price']} | RSI: {data['rsi']} | {data['signal']}")
 
 final_text = "\n".join(message_lines)
 
-# టెలిగ్రామ్‌కు మెసేజ్ పంపడం
+# టెలిగ్రామ్ మెసేజ్ పంపడం
 url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 res = requests.post(url, data={"chat_id": CHAT_ID, "text": final_text})
 
