@@ -7,28 +7,18 @@ import numpy as np
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 CHAT_ID = os.environ.get("CHAT_ID")
 
-# అన్ని రకాల అసెట్స్ లిస్ట్
 ASSETS = {
-    # 1. ఇండియన్ మార్కెట్ ఇండెక్స్
-    "^NSEI": "Nifty 50 🇮🇳",
-    
-    # 2. ప్రధాన క్రిప్టో
-    "BTC-USD": "Bitcoin 🪙",
-    "ETH-USD": "Ethereum 🪙",
-    
-    # 3. క్రిప్టో పెన్నీ కాయిన్స్
-    "DOGE-USD": "Dogecoin (Penny) 🐕",
-    "SHIB-USD": "Shiba Inu (Penny) 🐶",
-    "ADA-USD": "Cardano (Penny) 🪙",
-    
-    # 4. ప్రధాన భారతీయ షేర్లు
-    "RELIANCE.NS": "Reliance 🏢",
-    "TATAMOTORS.NS": "Tata Motors 🚗",
-    
-    # 5. భారతీయ పెన్నీ షేర్లు (NSE)
-    "IDEA.NS": "Vodafone Idea (Penny) 📱",
-    "SUZLON.NS": "Suzlon Energy (Penny) ⚡",
-    "YESBANK.NS": "Yes Bank (Penny) 🏦"
+    "^NSEI": "Nifty 50",
+    "BTC-USD": "Bitcoin",
+    "ETH-USD": "Ethereum",
+    "DOGE-USD": "Dogecoin (Penny)",
+    "SHIB-USD": "Shiba Inu (Penny)",
+    "ADA-USD": "Cardano (Penny)",
+    "RELIANCE.NS": "Reliance",
+    "TATAMOTORS.NS": "Tata Motors",
+    "IDEA.NS": "Vodafone Idea (Penny)",
+    "SUZLON.NS": "Suzlon Energy (Penny)",
+    "YESBANK.NS": "Yes Bank (Penny)"
 }
 
 def analyze_asset(symbol):
@@ -40,19 +30,16 @@ def analyze_asset(symbol):
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
 
-        # EMA లెక్కింపు
         df['EMA_9'] = df['Close'].ewm(span=9, adjust=False).mean()
         df['EMA_21'] = df['Close'].ewm(span=21, adjust=False).mean()
         df['EMA_50'] = df['Close'].ewm(span=50, adjust=False).mean()
 
-        # RSI లెక్కింపు
         delta = df['Close'].diff()
         gain = (delta.where(delta > 0, 0)).rolling(14).mean()
         loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
         rs = gain / loss
         df['RSI'] = 100 - (100 / (1 + rs))
 
-        # MACD లెక్కింపు
         exp1 = df['Close'].ewm(span=12, adjust=False).mean()
         exp2 = df['Close'].ewm(span=26, adjust=False).mean()
         df['MACD'] = exp1 - exp2
@@ -66,33 +53,32 @@ def analyze_asset(symbol):
         c4 = last['MACD'] > last['Signal_Line']
 
         signal = "BUY 🟢" if (c1 and c2 and c3 and c4) else "HOLD 🟡"
-        
-        # అతి తక్కువ ధర ఉండే పెన్నీ కాయిన్ల కోసం డెసిమల్స్
-        price_format = f"{last['Close']:.6f}" if last['Close'] < 0.01 else f"{last['Close']:.2f}"
+        price_val = f"{last['Close']:.6f}" if last['Close'] < 0.01 else f"{last['Close']:.2f}"
 
         return {
-            "price_str": price_format,
-            "rsi": last['RSI'],
+            "price": price_val,
+            "rsi": f"{last['RSI']:.1f}",
             "signal": signal
         }
     except Exception:
         return None
 
-message_lines = ["📊 **డైలీ మార్కెట్ సిగ్నల్స్ రిపోర్ట్**\n"]
+message_lines = ["📊 DAILY MARKET SIGNALS\n"]
 
 for symbol, name in ASSETS.items():
     data = analyze_asset(symbol)
     if data:
-        currency = "$" if "USD" in symbol else "₹"
-        message_lines.append(
-            f"🔹 **{name}**\n"
-            f"ధర: {currency}{data['price_str']} | RSI: {data['rsi']:.1f}\n"
-            f"సిగ్నల్: {data['signal']}\n"
-        )
+        curr = "$" if "USD" in symbol else "Rs."
+        message_lines.append(f"{name}:\nధర: {curr} {data['price']} | RSI: {data['rsi']}\nసిగ్నల్: {data['signal']}\n")
 
-text = "\n".join(message_lines)
+final_text = "\n".join(message_lines)
 
-# టెలిగ్రామ్‌కు మెసేజ్ పంపడం
+# ఫార్మాటింగ్ ఎర్రర్స్ లేకుండా సాధారణ టెక్స్ట్‌గా పంపడం
 url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-res = requests.post(url, data={"chat_id": CHAT_ID, "text": text, "parse_mode": "Markdown"})
-print("Alert Sent!" if res.status_code == 200 else f"Error: {res.text}")
+res = requests.post(url, data={"chat_id": CHAT_ID, "text": final_text})
+
+if res.status_code == 200:
+    print("Alert Sent Successfully!")
+else:
+    print(f"Telegram API Error: {res.status_code} - {res.text}")
+    raise Exception(f"Failed to send alert: {res.text}")
