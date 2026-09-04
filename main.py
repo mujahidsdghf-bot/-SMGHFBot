@@ -4,42 +4,46 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
-CHAT_ID = os.environ.get("CHAT_ID")
+# టోకెన్, చాట్ ఐడీల్లో స్పేస్ ఉంటే తొలగించడం
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
+CHAT_ID = os.environ.get("CHAT_ID", "").strip()
 
+# నిఫ్టీ 50, క్రిప్టో, పెన్నీ కాయిన్స్, ప్రధాన స్టాక్స్ & పెన్నీ షేర్లు
 ASSETS = {
-    "^NSEI": "Nifty 50",
-    "BTC-USD": "Bitcoin",
-    "ETH-USD": "Ethereum",
-    "DOGE-USD": "Dogecoin (Penny)",
-    "SHIB-USD": "Shiba Inu (Penny)",
-    "ADA-USD": "Cardano (Penny)",
-    "RELIANCE.NS": "Reliance",
-    "TATAMOTORS.NS": "Tata Motors",
-    "IDEA.NS": "Vodafone Idea (Penny)",
-    "SUZLON.NS": "Suzlon Energy (Penny)",
-    "YESBANK.NS": "Yes Bank (Penny)"
+    "^NSEI": "Nifty 50 🇮🇳",
+    "BTC-USD": "Bitcoin 🪙",
+    "ETH-USD": "Ethereum 🪙",
+    "DOGE-USD": "Dogecoin (Penny) 🐕",
+    "SHIB-USD": "Shiba Inu (Penny) 🐶",
+    "ADA-USD": "Cardano (Penny) 🪙",
+    "RELIANCE.NS": "Reliance 🏢",
+    "IDEA.NS": "Vodafone Idea (Penny) 📱",
+    "SUZLON.NS": "Suzlon Energy (Penny) ⚡",
+    "YESBANK.NS": "Yes Bank (Penny) 🏦"
 }
 
 def analyze_asset(symbol):
     try:
         df = yf.download(symbol, period="200d", interval="1d", auto_adjust=True, progress=False)
-        if df.empty or len(df) < 50:
+        if df is None or df.empty or len(df) < 50:
             return None
         
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
 
+        # మూవింగ్ యావరేజెస్ (EMA)
         df['EMA_9'] = df['Close'].ewm(span=9, adjust=False).mean()
         df['EMA_21'] = df['Close'].ewm(span=21, adjust=False).mean()
         df['EMA_50'] = df['Close'].ewm(span=50, adjust=False).mean()
 
+        # RSI లెక్కింపు
         delta = df['Close'].diff()
         gain = (delta.where(delta > 0, 0)).rolling(14).mean()
         loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
         rs = gain / loss
         df['RSI'] = 100 - (100 / (1 + rs))
 
+        # MACD లెక్కింపు
         exp1 = df['Close'].ewm(span=12, adjust=False).mean()
         exp2 = df['Close'].ewm(span=26, adjust=False).mean()
         df['MACD'] = exp1 - exp2
@@ -73,12 +77,12 @@ for symbol, name in ASSETS.items():
 
 final_text = "\n".join(message_lines)
 
-# ఫార్మాటింగ్ ఎర్రర్స్ లేకుండా సాధారణ టెక్స్ట్‌గా పంపడం
+# టెలిగ్రామ్‌కు మెసేజ్ పంపడం
 url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 res = requests.post(url, data={"chat_id": CHAT_ID, "text": final_text})
 
 if res.status_code == 200:
     print("Alert Sent Successfully!")
 else:
-    print(f"Telegram API Error: {res.status_code} - {res.text}")
+    print(f"Telegram Error: {res.status_code} - {res.text}")
     raise Exception(f"Failed to send alert: {res.text}")
