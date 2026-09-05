@@ -19,7 +19,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install yfinance pandas numpy requests
+          pip install yfinance pandas numpy requests upstox-python-sdk
 
       - name: Run Alert Bot
         env:
