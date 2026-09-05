@@ -23,8 +23,8 @@ jobs:
 
       - name: Run Alert Bot
         env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          CHAT_ID: ${{ secrets.CHAT_ID }}
+          BOT_TOKEN: ${{ secrets.8622834558:AAH3FP_N54Z9_2QX2U5gALm5KdVVwI3ZGc8 }}
+          CHAT_ID: ${{ secrets.6860978416 }}
         run: |
           python main.py
           
