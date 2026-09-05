@@ -25,6 +25,8 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.8622834558:AAH3FP_N54Z9_2QX2U5gALm5KdVVwI3ZGc8 }}
           CHAT_ID: ${{ secrets.6860978416 }}
+          UPSTOX_ACCESS_TOKEN: ${{ secrets.UPSTOX_ACCESS_TOKEN }}
+        
         run: |
           python main.py
           
