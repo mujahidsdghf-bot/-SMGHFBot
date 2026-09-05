@@ -1,9 +1,9 @@
-name: Daily Crypto Bot Alert
+name: Hourly Crypto and Market Bot Alert
 
 on:
   schedule:
-    - cron: '30 3 * * *'  # ప్రతిరోజూ ఉదయం IST 9:00 AM కి రన్ అవుతుంది
-  workflow_dispatch:      # మీరు బటన్ నొక్కినప్పుడు కూడా రన్ అవుతుంది
+    - cron: '0 * * * *'   # ప్రతి 1 గంటకు ఆటోమేటిక్‌గా రన్ అవుతుంది
+  workflow_dispatch:       # మీరు మాన్యువల్‌గా Run workflow నొక్కినప్పుడు కూడా పనిచేస్తుంది
 
 jobs:
   run-bot:
@@ -29,4 +29,3 @@ jobs:
           UPSTOX_ACCESS_TOKEN: ${{ secrets.UPSTOX_ACCESS_TOKEN }}
         run: |
           python main.py
-          
