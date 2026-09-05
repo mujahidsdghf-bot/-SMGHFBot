@@ -5,9 +5,43 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 
+# Secrets
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 CHAT_ID = os.environ.get("CHAT_ID", "").strip()
+UPSTOX_TOKEN = os.environ.get("UPSTOX_ACCESS_TOKEN", "").strip()
 
+def send_telegram(text):
+    if not BOT_TOKEN or not CHAT_ID:
+        print("Telegram Credentials Missing!")
+        return
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    try:
+        requests.post(url, json={"chat_id": CHAT_ID, "text": text})
+    except Exception as e:
+        print(f"Telegram Error: {e}")
+
+# --- UPSTOX API కనెక్షన్ టెస్ట్ & లైవ్ ఫీడ్ ---
+def get_upstox_live_status():
+    if not UPSTOX_TOKEN:
+        return "⚠️ Upstox Token సెట్ చేయలేదు (Yahoo Finance బ్యాకప్ వాడుతోంది)."
+    
+    headers = {
+        "Accept": "application/json",
+        "Authorization": f"Bearer {UPSTOX_TOKEN}"
+    }
+    url = "https://api.upstox.com/v2/user/profile"
+    try:
+        res = requests.get(url, headers=headers, timeout=10)
+        if res.status_code == 200:
+            data = res.json().get("data", {})
+            user_name = data.get("user_name", "Trader")
+            return f"✅ **Upstox API లైవ్ కనెక్ట్ అయింది!**\nయూజర్: {user_name} | బ్రోకర్: Active 🟢"
+        else:
+            return f"⚠️ Upstox API కనెక్షన్ ఎర్రర్: {res.status_code} (టోకెన్ ఎక్స్‌పైర్ అయ్యి ఉండవచ్చు)."
+    except Exception as e:
+        return f"⚠️ Upstox కనెక్షన్ ఫెయిల్ అయింది: {e}"
+
+# --- మార్కెట్ అసెట్ లిస్ట్ ---
 CATEGORIES = {
     "🎯 [ ఫ్యూచర్స్ స్పెషల్ (Index & F&O) ]": {
         "^NSEI": ("Nifty 50 Index", True),
@@ -19,81 +53,43 @@ CATEGORIES = {
         "BTC-USD": ("Bitcoin Futures", True),
         "ETH-USD": ("Ethereum Futures", True)
     },
-    "🇮🇳 [ నిఫ్టీ 50 ప్రధాన షేర్లు - గ్రూప్ 1 ]": {
-        "RELIANCE.NS": ("Reliance", True), "TCS.NS": ("TCS", True), "HDFCBANK.NS": ("HDFC Bank", True),
-        "BHARTIARTL.NS": ("Bharti Airtel", True), "ICICIBANK.NS": ("ICICI Bank", True), "INFY.NS": ("Infosys", True),
-        "SBIN.NS": ("SBI", True), "ITC.NS": ("ITC", True), "HINDUNILVR.NS": ("HUL", True), "LT.NS": ("L&T", True),
-        "BAJFINANCE.NS": ("Bajaj Finance", True), "HCLTECH.NS": ("HCL Tech", True), "MARUTI.NS": ("Maruti Suzuki", True),
-        "SUNPHARMA.NS": ("Sun Pharma", True), "ADANIENT.NS": ("Adani Ent", True), "KOTAKBANK.NS": ("Kotak Bank", True),
-        "TITAN.NS": ("Titan", True), "ONGC.NS": ("ONGC", True), "TATACONSUM.NS": ("Tata Consumer", True),
-        "NTPC.NS": ("NTPC", True), "AXISBANK.NS": ("Axis Bank", True), "POWERGRID.NS": ("Power Grid", True),
-        "BAJAJFINSV.NS": ("Bajaj Finserv", True), "M&M.NS": ("Mahindra & Mahindra", True), "COALINDIA.NS": ("Coal India", True)
-    },
-    "🇮🇳 [ నిఫ్టీ 50 ప్రధాన షేర్లు - గ్రూప్ 2 ]": {
-        "JSWSTEEL.NS": ("JSW Steel", True), "TATASTEEL.NS": ("Tata Steel", True), "ADANIPORTS.NS": ("Adani Ports", True),
-        "HINDALCO.NS": ("Hindalco", True), "GRASIM.NS": ("Grasim", True), "TECHM.NS": ("Tech Mahindra", True),
-        "WIPRO.NS": ("Wipro", True), "ULTRACEMCO.NS": ("UltraTech Cement", True), "BRITANNIA.NS": ("Britannia", True),
-        "NESTLEIND.NS": ("Nestle India", True), "ASIANPAINT.NS": ("Asian Paints", True), "BAJAJ-AUTO.NS": ("Bajaj Auto", True),
-        "EICHERMOT.NS": ("Eicher Motors", True), "HEROMOTOCO.NS": ("Hero MotoCorp", True), "CIPLA.NS": ("Cipla", True),
-        "DRREDDY.NS": ("Dr Reddy", True), "APOLLOHOSP.NS": ("Apollo Hospitals", True), "DIVISLAB.NS": ("Divis Lab", True),
-        "BPCL.NS": ("BPCL", True), "SBILIFE.NS": ("SBI Life", True), "HDFCLIFE.NS": ("HDFC Life", True),
-        "SHRIRAMFIN.NS": ("Shriram Finance", True), "BEL.NS": ("BEL", True), "TRENT.NS": ("Trent", True)
-    },
     "🚗 [ EV & బ్యాటరీ స్టాక్స్ ]": {
-        "TATAMOTORS.NS": ("Tata Motors (EV Leader)", True),
+        "TATAMOTORS.NS": ("Tata Motors (EV)", True),
         "M&M.NS": ("M&M (EV SUV)", True),
         "TVSMOTOR.NS": ("TVS Motor (EV 2W)", True),
-        "OLECTRA.NS": ("Olectra Greentech (EV Bus)", False),
-        "EXIDEIND.NS": ("Exide Industries (Battery)", True),
+        "OLECTRA.NS": ("Olectra (EV Bus)", False),
+        "EXIDEIND.NS": ("Exide (Battery)", True),
         "ARE&M.NS": ("Amara Raja (Battery)", True),
-        "SONACOMS.NS": ("Sona BLW (EV Parts)", False),
-        "TATACHEM.NS": ("Tata Chemicals (Lithium)", True)
+        "SONACOMS.NS": ("Sona BLW", False),
+        "TATACHEM.NS": ("Tata Chemicals", True)
     },
-    "☀️ [ సోలార్ & రెన్యూవబుల్ ఎనర్జీ స్టాక్స్ ]": {
-        "TATAPOWER.NS": ("Tata Power (Solar/EV)", True),
-        "ADANIGREEN.NS": ("Adani Green Energy", False),
+    "☀️ [ సోలార్ & రెన్యూవబుల్ స్టాక్స్ ]": {
+        "TATAPOWER.NS": ("Tata Power (Solar)", True),
+        "ADANIGREEN.NS": ("Adani Green", False),
         "NTPC.NS": ("NTPC Green", True),
-        "SUZLON.NS": ("Suzlon Energy (Wind/Solar)", False),
-        "INOXGREEN.NS": ("Inox Green Energy", False),
-        "URJAGLOBAL.NS": ("Urja Global (Solar Penny)", False),
-        "ZODIAC.NS": ("Zodiac Energy (Solar EPC)", False)
+        "SUZLON.NS": ("Suzlon Energy", False),
+        "INOXGREEN.NS": ("Inox Green", False),
+        "URJAGLOBAL.NS": ("Urja Global (Penny)", False),
+        "ZODIAC.NS": ("Zodiac Energy", False)
     },
-    "⚡ [ భారతీయ పెన్నీ స్టాక్స్ ]": {
+    "⚡ [ భారతీయ పెన్నీ షేర్లు ]": {
         "IDEA.NS": ("Vodafone Idea", False),
         "YESBANK.NS": ("Yes Bank", False),
         "RPOWER.NS": ("Reliance Power", False),
         "JPPOWER.NS": ("Jaiprakash Power", False),
-        "SOUTHBANK.NS": ("South Indian Bank", False),
-        "UCOBANK.NS": ("UCO Bank", False),
-        "IOB.NS": ("Indian Overseas Bank", False),
-        "CENTRALBK.NS": ("Central Bank", False),
-        "GTLINFRA.NS": ("GTL Infra", False),
-        "HFCL.NS": ("HFCL", False),
-        "VIKASECO.NS": ("Vikas Ecotech", False)
+        "SOUTHBANK.NS": ("South Indian Bank", False)
     },
-    "🪙 [ టాప్ క్రిప్టో అసెట్స్ ]": {
+    "🪙 [ టాప్ & గ్రీన్ క్రిప్టో ]": {
         "BTC-USD": ("Bitcoin", True),
         "ETH-USD": ("Ethereum", True),
         "SOL-USD": ("Solana", True),
-        "BNB-USD": ("BNB", True),
-        "XRP-USD": ("XRP", True),
-        "ADA-USD": ("Cardano", True),
-        "AVAX-USD": ("Avalanche", True)
-    },
-    "🐕 [ క్రిప్టో పెన్నీ, మీమ్ & గ్రీన్ కాయిన్స్ ]": {
-        "POWR-USD": ("Powerledger (Solar Token)", False),
-        "ALGO-USD": ("Algorand (Green Crypto)", True),
-        "HBAR-USD": ("Hedera (Eco Token)", True),
         "DOGE-USD": ("Dogecoin (Penny)", True),
-        "SHIB-USD": ("Shiba Inu (Penny)", False),
-        "PEPE-USD": ("Pepe (Penny)", False),
-        "FLOKI-USD": ("Floki (Penny)", False),
-        "BONK-USD": ("Bonk (Penny)", False),
-        "GALA-USD": ("Gala (Penny)", False)
+        "POWR-USD": ("Powerledger (Solar)", False),
+        "ALGO-USD": ("Algorand (Green)", True)
     }
 }
 
-def analyze_full_market(symbol, has_futures):
+def analyze_market(symbol, has_futures):
     try:
         df = yf.download(symbol, period="100d", interval="1d", auto_adjust=True, progress=False)
         if df is None or df.empty or len(df) < 30:
@@ -162,16 +158,15 @@ def analyze_full_market(symbol, has_futures):
     except Exception:
         return None
 
-def send_telegram(text):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    requests.post(url, data={"chat_id": CHAT_ID, "text": text})
-
-send_telegram("🚀 **AI ALL-IN-ONE MEGA SCANNER REPORT**\n(Nifty 50, Penny, EV, Solar, Crypto & Futures)")
+# రన్ చేయడం
+upstox_status = get_upstox_live_status()
+header_msg = f"🚀 **SM AI TRADING BOT (UPSTOX LIVE CONNECTED)**\n\n{upstox_status}"
+send_telegram(header_msg)
 
 for cat_name, items in CATEGORIES.items():
     lines = [f"{cat_name}\n======================="]
     for symbol, (name, has_fno) in items.items():
-        data = analyze_full_market(symbol, has_fno)
+        data = analyze_market(symbol, has_fno)
         if data:
             curr = "$" if "USD" in symbol else "₹"
             block = (
@@ -187,4 +182,4 @@ for cat_name, items in CATEGORIES.items():
     send_telegram("\n".join(lines))
     time.sleep(1)
 
-print("Mega Scanner Alert Sent Successfully!")
+print("All Reports Sent with Upstox Integration!")
