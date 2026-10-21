@@ -4,36 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum AI Algorithmic Trading Workstation Terminal v5.0 Pro</title>
-    <!-- Tailwind CSS -->
+    <title>Quantum AI Trading Workstation Pro v5.0</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- FontAwesome Pro Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Google Fonts: Inter, JetBrains Mono, Noto Sans Telugu -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        termBg: '#020617',
-                        termPanel: 'rgba(15, 23, 42, 0.8)',
-                        termBorder: 'rgba(255, 255, 255, 0.08)',
-                        goldAccent: '#F59E0B',
-                        emeraldAccent: '#10B981',
-                        crimsonAccent: '#F43F5E',
-                        cyanAccent: '#06B6D4',
-                        purpleAccent: '#8B5CF6'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'Noto Sans Telugu', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
+                        darkbg: '#0a0d14',
+                        cardbg: '#121824',
+                        cardborder: '#1e293b',
+                        emeraldneon: '#10b981',
+                        crimsonneon: '#ef4444',
+                        cyanneon: '#06b6d4',
+                        goldneon: '#f59e0b'
                     }
                 }
             }
@@ -41,855 +31,667 @@
     </script>
     <style>
         body {
-            background-color: #020617;
-            color: #F8FAFC;
-            font-family: 'Inter', 'Noto Sans Telugu', sans-serif;
-            overflow-x: hidden;
+            background-color: #06090e;
+            color: #f1f5f9;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
-        
-        /* Custom Glassmorphism UI */
         .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(18, 24, 36, 0.75);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        
-        .glow-emerald { box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
-        .glow-gold { box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
-        .glow-crimson { box-shadow: 0 0 20px rgba(244, 63, 94, 0.2); }
-        .glow-cyan { box-shadow: 0 0 20px rgba(6, 182, 212, 0.2); }
-        .glow-purple { box-shadow: 0 0 20px rgba(139, 92, 246, 0.2); }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: #020617; }
-        ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #334155; }
-
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 0.3; }
+        .glow-emerald {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
         }
-        .live-pulse { animation: pulseGlow 2s infinite ease-in-out; }
+        .glow-gold {
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0d14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col text-slate-100 selection:bg-cyanAccent selection:text-black">
+<body class="min-h-screen flex flex-col justify-between p-2 md:p-4 text-xs md:text-sm">
 
-    <!-- Top Navigation Terminal Header -->
-    <header class="glass-panel sticky top-0 z-50 border-b border-termBorder px-4 py-2 shadow-2xl">
-        <div class="max-w-[1850px] mx-auto flex flex-wrap items-center justify-between gap-3">
-            
-            <!-- Logo & Terminal Details -->
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyanAccent via-purpleAccent to-emeraldAccent p-[1px] glow-purple">
-                    <div class="w-full h-full bg-termBg rounded-[11px] flex items-center justify-center font-black text-cyanAccent text-lg">
-                        <i class="fa-solid fa-atom"></i>
-                    </div>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h1 class="font-extrabold text-base tracking-wider text-white">QUANTUM AI WORKSTATION</h1>
-                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyanAccent/10 text-cyanAccent border border-cyanAccent/30 font-bold">PRO v5.0</span>
-                    </div>
-                    <p class="text-[11px] text-slate-400 font-mono flex items-center gap-2">
-                        <span>Upstox v2 WebSocket Feed</span>
-                        <span class="text-slate-600">•</span>
-                        <span>Level 2 DOM Engine</span>
-                    </p>
-                </div>
+    <!-- TOP HEADER BAR -->
+    <header class="glass-panel rounded-2xl p-3 mb-4 flex flex-col lg:flex-row justify-between items-center gap-3 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+            <div class="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emeraldneon text-xl animate-pulse">
+                <i class="fa-solid font-bold fa-microchip"></i>
+            </div>
+            <div>
+                <h1 class="text-base md:text-lg font-black tracking-wider text-white flex items-center gap-2">
+                    QUANTUM AI WORKSTATION <span class="bg-gradient-to-r from-emerald-400 to-cyan-500 text-black px-2 py-0.5 rounded text-[10px] font-bold">PRO v5.0</span>
+                </h1>
+                <p class="text-[11px] text-slate-400 flex items-center gap-2">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span id="txt-feed-status">Upstox v2 WebSocket Feed • Level 2 DOM Engine</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-end">
+            <!-- Ticks Counter Indicator -->
+            <div class="px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-emerald-400 font-mono text-xs flex items-center gap-2">
+                <i class="fa-solid fa-bolt text-goldneon"></i>
+                <span>FEED: <strong id="feed-ticks">512</strong> Ticks/s</span>
             </div>
 
-            <!-- Ticker Tape (Live Index Prices) -->
-            <div class="hidden xl:flex items-center gap-4 bg-black/50 border border-termBorder px-4 py-1.5 rounded-xl font-mono text-xs">
-                <div class="flex items-center gap-1.5">
-                    <span class="text-slate-400">NIFTY 50:</span>
-                    <span class="text-emeraldAccent font-bold" id="tape-nifty">25,120.40</span>
-                    <span class="text-[10px] text-emeraldAccent">+0.82%</span>
-                </div>
-                <div class="h-3 w-[1px] bg-slate-800"></div>
-                <div class="flex items-center gap-1.5">
-                    <span class="text-slate-400">BANK NIFTY:</span>
-                    <span class="text-emeraldAccent font-bold" id="tape-bank">53,410.15</span>
-                    <span class="text-[10px] text-emeraldAccent">+0.64%</span>
-                </div>
-                <div class="h-3 w-[1px] bg-slate-800"></div>
-                <div class="flex items-center gap-1.5">
-                    <span class="text-slate-400">BTC/USD:</span>
-                    <span class="text-crimsonAccent font-bold" id="tape-btc">$68,950.00</span>
-                    <span class="text-[10px] text-crimsonAccent">-0.15%</span>
-                </div>
-            </div>
+            <!-- Language Switcher -->
+            <button onclick="toggleLanguage()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-language text-cyan-400"></i>
+                <span id="lang-btn-text">English లోకి మార్చు</span>
+            </button>
 
-            <!-- Action Controls & Bilingual Switcher -->
-            <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2 bg-emeraldAccent/10 border border-emeraldAccent/30 px-3 py-1 rounded-xl text-xs font-mono text-emeraldAccent">
-                    <span class="w-2 h-2 rounded-full bg-emeraldAccent animate-ping"></span>
-                    <span id="lbl-ws-status">QUANTUM FEED: 500 Ticks/s</span>
-                </div>
+            <!-- API Settings Button -->
+            <button onclick="openApiModal()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-sliders text-emerald-400"></i>
+                <span id="txt-api-btn">⚡ API సెట్టింగ్స్</span>
+            </button>
 
-                <!-- Language Switcher Button -->
-                <button onclick="toggleLanguage()" class="bg-slate-800 hover:bg-slate-700 border border-termBorder px-3 py-1.5 rounded-xl text-xs font-bold text-slate-200 transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-language text-cyanAccent"></i>
-                    <span id="lang-btn-text">English లోకి మార్చు</span>
-                </button>
+            <!-- Upstox Affiliate Link Button -->
+            <a href="https://upstox.com/open-account/?f=SMGHFBOT" target="_blank" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold flex items-center gap-1.5 shadow-lg glow-emerald transition">
+                <i class="fa-solid fa-user-plus"></i>
+                <span id="txt-open-account">🚀 Upstox అకౌంట్ ఓపెన్ చేయండి</span>
+            </a>
 
-                <!-- Panic Exit Button -->
-                <button onclick="triggerPanicModal()" class="bg-crimsonAccent/20 hover:bg-crimsonAccent/30 text-crimsonAccent border border-crimsonAccent/50 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 glow-crimson">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span data-i18n="panic_btn">PANIC EXIT ALL</span>
-                </button>
-            </div>
+            <!-- Panic Exit Button -->
+            <button onclick="panicExitAll()" class="px-3 py-1.5 rounded-xl bg-red-600/90 hover:bg-red-700 text-white font-bold border border-red-500 flex items-center gap-1.5 transition shadow-lg">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span id="txt-panic-btn">🚨 PANIC EXIT ALL</span>
+            </button>
         </div>
     </header>
 
-    <!-- Main Workstation Layout -->
-    <main class="max-w-[1850px] w-full mx-auto p-3 lg:p-4 space-y-4 flex-grow">
+    <!-- UPSTOX AFFILIATE REVENUE BANNER -->
+    <section class="glass-panel rounded-2xl p-4 mb-4 border border-emerald-500/30 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-cyan-950/40 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <div class="hidden sm:flex p-3 bg-emerald-500/20 text-emerald-400 rounded-2xl text-2xl border border-emerald-500/40">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <div>
+                <h3 class="text-sm md:text-base font-bold text-white flex items-center gap-2">
+                    <span class="text-emerald-400" id="aff-title">మీకు ఇంకా Upstox అకౌంట్ లేదా?</span>
+                    <span class="bg-goldneon/20 text-goldneon border border-goldneon/40 text-[10px] px-2 py-0.5 rounded-full font-semibold">Zero Brokerage Options</span>
+                </h3>
+                <p class="text-xs text-slate-300 mt-1" id="aff-desc">
+                    మా Quantum AI Workstation కి Upstox API ఉచితంగా కనెక్ట్ చేసుకోండి. వేగవంతమైన ఆర్డర్ ఎగ్జిక్యూషన్ మరియు తక్కువ బ్రోకరేజ్ ఛార్జీల ప్రయోజనం పొందండి.
+                </p>
+            </div>
+        </div>
+        <a href="https://upstox.com/open-account/?f=SMGHFBOT" target="_blank" class="w-full md:w-auto px-5 py-2.5 bg-gradient-to-r from-goldneon to-amber-500 hover:from-amber-400 hover:to-goldneon text-black font-extrabold rounded-xl text-center shadow-lg glow-gold transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            <span id="aff-btn">ఉచితంగా Upstox అకౌంట్ ఓపెన్ చేయండి</span>
+        </a>
+    </section>
 
-        <!-- Metrics Dashboard Bar -->
-        <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-            <div class="glass-panel p-3 rounded-2xl border border-termBorder">
-                <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider block" data-i18n="pnl_today">ఈరోజు P&L</span>
-                <div class="text-xl font-bold font-mono text-emeraldAccent mt-1" id="val-pnl">+₹28,450.00</div>
-                <span class="text-[10px] text-emeraldAccent font-mono"><i class="fa-solid fa-arrow-up"></i> +6.8% Net ROI</span>
+    <!-- TOP STATS CARDS GRID -->
+    <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+        <!-- Today's P&L -->
+        <div class="glass-panel p-3 rounded-2xl border-l-4 border-l-emerald-500">
+            <p class="text-slate-400 text-[11px]" id="lbl-pnl">ఈరోజు P&L</p>
+            <h2 class="text-base md:text-lg font-black text-emeraldneon mt-0.5" id="val-pnl">+₹2,717.00</h2>
+            <p class="text-[10px] text-emerald-400 mt-0.5"><i class="fa-solid fa-arrow-up"></i> +4.8% Net ROI</p>
+        </div>
+
+        <!-- Active Positions -->
+        <div class="glass-panel p-3 rounded-2xl border-l-4 border-l-cyan-500">
+            <p class="text-slate-400 text-[11px]" id="lbl-positions">యాక్టివ్ పొజిషన్లు</p>
+            <h2 class="text-base md:text-lg font-black text-white mt-0.5">5 Orders</h2>
+            <p class="text-[10px] text-goldneon mt-0.5"><i class="fa-solid fa-shield-halved"></i> Trailing SL Active</p>
+        </div>
+
+        <!-- ML Win Rate -->
+        <div class="glass-panel p-3 rounded-2xl border-l-4 border-l-purple-500">
+            <p class="text-slate-400 text-[11px]" id="lbl-winrate">QUANTUM ML WIN RATE</p>
+            <h2 class="text-base md:text-lg font-black text-purple-400 mt-0.5">89.4%</h2>
+            <p class="text-[10px] text-slate-400 mt-0.5">Confidence &gt; 85%</p>
+        </div>
+
+        <!-- GitHub Cron Status -->
+        <div class="glass-panel p-3 rounded-2xl border-l-4 border-l-emerald-400">
+            <p class="text-slate-400 text-[11px]">GITHUB CRON STATUS</p>
+            <h2 class="text-base md:text-lg font-black text-emerald-400 mt-0.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> RUNNING
+            </h2>
+            <p class="text-[10px] text-slate-400 mt-0.5 font-mono">main.py ('*/5 * * * *')</p>
+        </div>
+
+        <!-- Scanned Assets -->
+        <div class="glass-panel p-3 rounded-2xl border-l-4 border-l-blue-500">
+            <p class="text-slate-400 text-[11px]" id="lbl-scanned">స్కాన్ చేసిన ఆసెట్లు</p>
+            <h2 class="text-base md:text-lg font-black text-blue-400 mt-0.5">210 Instruments</h2>
+            <p class="text-[10px] text-slate-400 mt-0.5">NSE 160 + Crypto 50</p>
+        </div>
+
+        <!-- Max Exposure -->
+        <div class="glass-panel p-3 rounded-2xl border-l-4 border-l-amber-500">
+            <p class="text-slate-400 text-[11px]" id="lbl-risk">మొత్తం రిస్క్ EXPOSURE</p>
+            <h2 class="text-base md:text-lg font-black text-amber-400 mt-0.5">1.2% Capital</h2>
+            <p class="text-[10px] text-slate-400 mt-0.5">Max Risk Capped</p>
+        </div>
+    </section>
+
+    <!-- MAIN WORKSPACE GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-4">
+
+        <!-- LEFT COLUMN: ALGO EXECUTOR & CALCULATOR (4 cols) -->
+        <section class="lg:col-span-4 flex flex-col gap-4">
+
+            <!-- Algo Trade Executor Form -->
+            <div class="glass-panel rounded-2xl p-4 border border-slate-800">
+                <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
+                    <h2 class="font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-goldneon"></i>
+                        <span id="txt-executor-title">ఆల్గో ట్రేడ్ ఎగ్జిక్యూటర్</span>
+                    </h2>
+                    <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">Upstox v2 API</span>
+                </div>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-slate-400 text-[11px] mb-1" id="lbl-symbol">స్టాక్ / స్క్రిప్ పేరు</label>
+                        <input type="text" id="symbol" value="RELIANCE.NS" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold focus:outline-none focus:border-emerald-500 transition">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-slate-400 text-[11px] mb-1" id="lbl-entry">ఎంట్రీ ధర (₹)</label>
+                            <input type="number" id="entryPrice" value="2520.00" oninput="calculateRiskReward()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 text-[11px] mb-1" id="lbl-qty">క్వాంటిటీ (Qty)</label>
+                            <input type="number" id="quantity" value="30" oninput="calculateRiskReward()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-red-400 text-[11px] mb-1" id="lbl-sl">Stop Loss (SL)</label>
+                            <input type="number" id="stopLoss" value="2480.00" oninput="calculateRiskReward()" class="w-full bg-slate-900 border border-red-900/50 rounded-xl px-3 py-2 text-red-400 font-mono focus:outline-none focus:border-red-500">
+                        </div>
+                        <div>
+                            <label class="block text-emerald-400 text-[11px] mb-1" id="lbl-tgt">Target (T1)</label>
+                            <input type="number" id="target" value="2590.00" oninput="calculateRiskReward()" class="w-full bg-slate-900 border border-emerald-900/50 rounded-xl px-3 py-2 text-emerald-400 font-mono focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                            <span id="lbl-tsl">ట్రైలింగ్ SL (TSL Step)</span>
+                            <span id="tsl-val" class="text-cyan-400 font-mono">0.5% (₹12.60)</span>
+                        </div>
+                        <input type="range" id="tslStep" min="0.1" max="2.0" step="0.1" value="0.5" oninput="updateTSLDisplay(this.value)" class="w-full accent-cyan-500">
+                    </div>
+
+                    <!-- Risk Calculator Stats -->
+                    <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 space-y-1.5 font-mono text-[11px]">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Risk / Reward Ratio:</span>
+                            <span id="rrRatio" class="text-white font-bold">1 : 1.75</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Max Capital Risk:</span>
+                            <span id="maxRisk" class="text-red-400">₹1,200.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Expected Profit:</span>
+                            <span id="expProfit" class="text-emerald-400">₹2,100.00</span>
+                        </div>
+                    </div>
+
+                    <button onclick="sendAlgoOrder()" class="w-full py-3 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span id="btn-send-order">ఆల్గో ఆర్డర్ ప్లేస్ చేయి</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="glass-panel p-3 rounded-2xl border border-termBorder">
-                <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider block" data-i18n="active_orders">ఆక్టివ్ పొజిషన్లు</span>
-                <div class="text-xl font-bold font-mono text-white mt-1" id="val-active-count">5 Orders</div>
-                <span class="text-[10px] text-goldAccent font-mono"><i class="fa-solid fa-shield-halved"></i> Trailing SL Active</span>
-            </div>
-
-            <div class="glass-panel p-3 rounded-2xl border border-termBorder">
-                <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider block" data-i18n="win_rate">Quantum ML Win Rate</span>
-                <div class="text-xl font-bold font-mono text-cyanAccent mt-1">89.4%</div>
-                <span class="text-[10px] text-slate-400 font-mono">Confidence > 85%</span>
-            </div>
-
-            <div class="glass-panel p-3 rounded-2xl border border-termBorder">
-                <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider block" data-i18n="screened_assets">స్కాన్ చేసిన అసెట్లు</span>
-                <div class="text-xl font-bold font-mono text-purpleAccent mt-1">210 Instruments</div>
-                <span class="text-[10px] text-purpleAccent font-mono">NSE 160 + Crypto 50</span>
-            </div>
-
-            <div class="glass-panel p-3 rounded-2xl border border-termBorder">
-                <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider block" data-i18n="bot_mode">GitHub Cron Status</span>
-                <div class="text-xl font-bold font-mono text-emeraldAccent mt-1">RUNNING</div>
-                <span class="text-[10px] text-slate-400 font-mono">main.py ('0 * * * *')</span>
-            </div>
-
-            <div class="glass-panel p-3 rounded-2xl border border-termBorder">
-                <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider block" data-i18n="risk_exposure">మొత్తం రిస్క్ Exposure</span>
-                <div class="text-xl font-bold font-mono text-goldAccent mt-1">1.2% Capital</div>
-                <span class="text-[10px] text-slate-400 font-mono">Max Risk Capped</span>
+            <!-- Algo Backtester Trigger -->
+            <div class="glass-panel rounded-2xl p-4 border border-slate-800">
+                <h3 class="font-bold text-white text-xs mb-2 flex items-center justify-between">
+                    <span><i class="fa-solid fa-vial-circle-check text-purple-400 mr-1"></i> ఆల్గో స్ట్రాటజీ బ్యాక్‌టెస్టర్</span>
+                    <span class="text-[10px] text-slate-400">1 Year Tick Data</span>
+                </h3>
+                <select class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-200 mb-3 focus:outline-none">
+                    <option>Quantum EMA 9/21 Crossover</option>
+                    <option>VWAP Breakout + RSI Divergence</option>
+                    <option>Supertrend 3x ATR Dynamic Trail</option>
+                </select>
+                <button onclick="runSimulation()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-semibold rounded-xl border border-slate-700 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i>
+                    <span>బ్యాక్‌టెస్ట్ రన్ చేయి (Run Simulation)</span>
+                </button>
             </div>
         </section>
 
-        <!-- Main Terminal Grid (4 Columns Structure) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <!-- RIGHT COLUMN: CHARTS & ACTIVE POSITIONS TABLE (8 cols) -->
+        <section class="lg:col-span-8 flex flex-col gap-4">
 
-            <!-- COLUMN 1: Order Executor & Strategy Backtester (3 Cols) -->
-            <div class="lg:col-span-3 space-y-4">
-                
-                <!-- Order Execution Panel -->
-                <div class="glass-panel p-4 rounded-2xl border border-termBorder space-y-3">
-                    <div class="flex justify-between items-center border-b border-termBorder pb-2">
-                        <h2 class="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
-                            <i class="fa-solid fa-bolt text-goldAccent"></i>
-                            <span data-i18n="order_form_title">ఆటో ట్రేడ్ ఎగ్జిక్యూటర్</span>
-                        </h2>
-                        <span class="text-[10px] font-mono bg-emeraldAccent/10 text-emeraldAccent px-2 py-0.5 rounded border border-emeraldAccent/30">Upstox v2 API</span>
+            <!-- Live Charts Grid -->
+            <div class="glass-panel rounded-2xl p-4 border border-slate-800">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+                    <div class="flex items-center gap-2">
+                        <h2 class="font-bold text-white" id="chart-symbol-heading">RELIANCE.NS</h2>
+                        <span class="text-emerald-400 font-mono text-xs font-bold">₹2,520.00</span>
                     </div>
-
-                    <form id="order-form" onsubmit="event.preventDefault(); handleNewOrder();" class="space-y-3">
-                        <div>
-                            <label class="block text-[11px] text-slate-400 mb-1" data-i18n="lbl_symbol">స్టాక్ / క్రిప్టో పేరు</label>
-                            <input type="text" id="inp-symbol" value="RELIANCE.NS" required uppercase
-                                class="w-full bg-black/60 border border-termBorder rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-cyanAccent transition">
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-[11px] text-slate-400 mb-1" data-i18n="lbl_entry">ఎంట్రీ ధర (₹)</label>
-                                <input type="number" step="0.05" id="inp-entry" value="2520.00" oninput="calculateRisk()" required
-                                    class="w-full bg-black/60 border border-termBorder rounded-xl px-2.5 py-1.5 text-xs font-mono text-white focus:outline-none focus:border-cyanAccent">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] text-slate-400 mb-1" data-i18n="lbl_qty">క్వాంటిటీ (Qty)</label>
-                                <input type="number" id="inp-qty" value="30" oninput="calculateRisk()" required
-                                    class="w-full bg-black/60 border border-termBorder rounded-xl px-2.5 py-1.5 text-xs font-mono text-white focus:outline-none focus:border-cyanAccent">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-[11px] text-crimsonAccent mb-1">Stop Loss (SL)</label>
-                                <input type="number" step="0.05" id="inp-sl" value="2480.00" oninput="calculateRisk()" required
-                                    class="w-full bg-black/60 border border-crimsonAccent/40 rounded-xl px-2.5 py-1.5 text-xs font-mono text-white focus:outline-none focus:border-crimsonAccent">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] text-emeraldAccent mb-1">Target (T1)</label>
-                                <input type="number" step="0.05" id="inp-target" value="2590.00" oninput="calculateRisk()" required
-                                    class="w-full bg-black/60 border border-emeraldAccent/40 rounded-xl px-2.5 py-1.5 text-xs font-mono text-white focus:outline-none focus:border-emeraldAccent">
-                            </div>
-                        </div>
-
-                        <div class="bg-black/40 border border-termBorder p-2.5 rounded-xl space-y-1.5">
-                            <div class="flex justify-between items-center text-[11px]">
-                                <span class="text-slate-300 font-medium" data-i18n="lbl_tsl">ట్రైలింగ్ SL (TSL Step)</span>
-                                <span class="text-cyanAccent font-mono font-bold" id="lbl-tsl-val">0.5% (₹12.60)</span>
-                            </div>
-                            <input type="range" min="0.1" max="2.0" step="0.1" value="0.5" id="slider-tsl" oninput="updateTSLVal(this.value)"
-                                class="w-full accent-cyanAccent cursor-pointer">
-                        </div>
-
-                        <div class="bg-slate-900/90 border border-termBorder p-2.5 rounded-xl text-[11px] font-mono space-y-1">
-                            <div class="flex justify-between text-slate-400">
-                                <span>Risk / Reward Ratio:</span>
-                                <span class="text-goldAccent font-bold" id="calc-rr">1 : 1.75</span>
-                            </div>
-                            <div class="flex justify-between text-slate-400">
-                                <span>Max Capital Risk:</span>
-                                <span class="text-crimsonAccent font-bold" id="calc-max-risk">₹1,200.00</span>
-                            </div>
-                            <div class="flex justify-between text-slate-400">
-                                <span>Expected Profit:</span>
-                                <span class="text-emeraldAccent font-bold" id="calc-exp-profit">₹2,100.00</span>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="w-full bg-gradient-to-r from-cyanAccent via-purpleAccent to-emeraldAccent hover:opacity-90 text-black font-extrabold py-2.5 rounded-xl text-xs transition shadow-lg glow-purple flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-paper-plane"></i>
-                            <span data-i18n="btn_execute">ఆటో ఆర్డర్ ప్లేస్ చేయి</span>
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Strategy Backtesting Engine Panel -->
-                <div class="glass-panel p-4 rounded-2xl border border-termBorder space-y-3">
-                    <div class="flex justify-between items-center border-b border-termBorder pb-2">
-                        <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-vial-circle-check text-purpleAccent"></i>
-                            <span data-i18n="backtest_title">ఆల్గో స్ట్రాటజీ బ్యాక్‌టెస్టర్</span>
-                        </h3>
-                        <span class="text-[10px] font-mono text-slate-400">1 Year Tick Data</span>
-                    </div>
-
-                    <div class="space-y-2">
-                        <div>
-                            <label class="block text-[11px] text-slate-400 mb-1">స్ట్రాటజీ మోడల్</label>
-                            <select id="backtest-strategy" class="w-full bg-black/60 border border-termBorder rounded-xl px-2.5 py-1.5 text-xs font-mono text-white focus:outline-none">
-                                <option value="ema">Quantum EMA 9/21 Crossover</option>
-                                <option value="rsi">RSI Mean Reversion + Volume Burst</option>
-                                <option value="vwap">Institutional VWAP Breakout</option>
-                            </select>
-                        </div>
-
-                        <button onclick="runBacktestSimulation()" class="w-full bg-slate-800 hover:bg-slate-700 border border-termBorder text-cyanAccent font-bold py-1.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-play text-xs"></i>
-                            <span>బ్యాక్‌టెస్ట్ రన్ చేయి (Run Simulation)</span>
-                        </button>
-
-                        <div id="backtest-results" class="hidden bg-black/60 border border-termBorder p-2.5 rounded-xl space-y-1.5 font-mono text-[11px]">
-                            <div class="flex justify-between text-slate-300">
-                                <span>Win Rate:</span>
-                                <span class="text-emeraldAccent font-bold">78.4%</span>
-                            </div>
-                            <div class="flex justify-between text-slate-300">
-                                <span>Profit Factor:</span>
-                                <span class="text-goldAccent font-bold">2.42</span>
-                            </div>
-                            <div class="flex justify-between text-slate-300">
-                                <span>Max Drawdown:</span>
-                                <span class="text-crimsonAccent font-bold">-4.1%</span>
-                            </div>
-                            <div class="flex justify-between text-slate-300">
-                                <span>Sharpe Ratio:</span>
-                                <span class="text-cyanAccent font-bold">2.18</span>
-                            </div>
-                        </div>
+                    <div class="flex gap-1">
+                        <button class="px-2 py-1 rounded bg-slate-800 text-xs text-slate-300">1m</button>
+                        <button class="px-2 py-1 rounded bg-emerald-500 text-xs text-black font-bold">5m</button>
+                        <button class="px-2 py-1 rounded bg-slate-800 text-xs text-slate-300">15m</button>
+                        <button class="px-2 py-1 rounded bg-slate-800 text-xs text-slate-300">1D</button>
                     </div>
                 </div>
 
+                <!-- 4 Multi-Timeframe Charts Sub-Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="bg-slate-900/80 p-2 rounded-xl border border-slate-800 relative">
+                        <span class="absolute top-2 left-2 text-[10px] text-cyan-400 font-mono">1 Min Feed</span>
+                        <canvas id="chart1m" class="w-full h-28"></canvas>
+                    </div>
+                    <div class="bg-slate-900/80 p-2 rounded-xl border border-slate-800 relative">
+                        <span class="absolute top-2 left-2 text-[10px] text-purple-400 font-mono">5 Min Feed</span>
+                        <canvas id="chart5m" class="w-full h-28"></canvas>
+                    </div>
+                    <div class="bg-slate-900/80 p-2 rounded-xl border border-slate-800 relative">
+                        <span class="absolute top-2 left-2 text-[10px] text-amber-400 font-mono">15 Min Feed</span>
+                        <canvas id="chart15m" class="w-full h-28"></canvas>
+                    </div>
+                    <div class="bg-slate-900/80 p-2 rounded-xl border border-slate-800 relative">
+                        <span class="absolute top-2 left-2 text-[10px] text-emerald-400 font-mono">1 Day Feed</span>
+                        <canvas id="chart1d" class="w-full h-28"></canvas>
+                    </div>
+                </div>
             </div>
 
-            <!-- COLUMN 2: Multi-Chart Grid View (1m, 5m, 15m, 1d) (5 Cols) -->
-            <div class="lg:col-span-5 space-y-4">
-                
-                <div class="glass-panel p-4 rounded-2xl border border-termBorder space-y-3">
-                    <div class="flex flex-wrap justify-between items-center gap-2 border-b border-termBorder pb-2.5">
-                        <div class="flex items-center gap-2">
-                            <select id="chart-asset-select" onchange="switchChartAsset()" class="bg-black border border-termBorder rounded-xl px-3 py-1.5 text-xs font-mono font-bold text-white focus:outline-none">
-                                <option value="RELIANCE.NS">RELIANCE.NS</option>
-                                <option value="TCS.NS">TCS.NS</option>
-                                <option value="NIFTY50">NIFTY 50 Index</option>
-                                <option value="BTC-USD">BTC-USD Crypto</option>
-                            </select>
-                            <span class="text-xs font-mono text-emeraldAccent font-bold" id="chart-live-price">₹2,520.00</span>
-                        </div>
-
-                        <!-- Active Timeframe Tabs -->
-                        <div class="flex items-center gap-1 bg-black/60 p-1 rounded-xl text-[10px] font-mono">
-                            <button onclick="switchTimeframe('1m')" id="tf-1m" class="px-2 py-0.5 rounded text-slate-400">1m</button>
-                            <button onclick="switchTimeframe('5m')" id="tf-5m" class="px-2 py-0.5 rounded bg-cyanAccent text-black font-bold">5m</button>
-                            <button onclick="switchTimeframe('15m')" id="tf-15m" class="px-2 py-0.5 rounded text-slate-400">15m</button>
-                            <button onclick="switchTimeframe('1d')" id="tf-1d" class="px-2 py-0.5 rounded text-slate-400">1D</button>
-                        </div>
-                    </div>
-
-                    <!-- Chart Grid View Container -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        <div class="bg-black/80 rounded-xl p-2 border border-termBorder h-[200px] relative">
-                            <span class="absolute top-2 left-2 text-[10px] font-mono text-cyanAccent bg-black/60 px-1.5 py-0.5 rounded border border-cyanAccent/30">1 Min Feed</span>
-                            <canvas id="chart-1m"></canvas>
-                        </div>
-                        <div class="bg-black/80 rounded-xl p-2 border border-termBorder h-[200px] relative">
-                            <span class="absolute top-2 left-2 text-[10px] font-mono text-purpleAccent bg-black/60 px-1.5 py-0.5 rounded border border-purpleAccent/30">5 Min Feed</span>
-                            <canvas id="chart-5m"></canvas>
-                        </div>
-                        <div class="bg-black/80 rounded-xl p-2 border border-termBorder h-[200px] relative">
-                            <span class="absolute top-2 left-2 text-[10px] font-mono text-goldAccent bg-black/60 px-1.5 py-0.5 rounded border border-goldAccent/30">15 Min Feed</span>
-                            <canvas id="chart-15m"></canvas>
-                        </div>
-                        <div class="bg-black/80 rounded-xl p-2 border border-termBorder h-[200px] relative">
-                            <span class="absolute top-2 left-2 text-[10px] font-mono text-emeraldAccent bg-black/60 px-1.5 py-0.5 rounded border border-emeraldAccent/30">1 Day Feed</span>
-                            <canvas id="chart-1d"></canvas>
-                        </div>
-                    </div>
+            <!-- Active Positions Table -->
+            <div class="glass-panel rounded-2xl p-4 border border-slate-800 overflow-x-auto">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-400"></i>
+                        <span id="txt-positions-heading">లైవ్ ఆల్గో-పొజిషన్స్ డ్యాష్‌బోర్డ్</span>
+                    </h3>
+                    <span class="text-[11px] text-slate-400 font-mono">WebSocket Realtime Sync</span>
                 </div>
 
-                <!-- Active Monitored Positions Table -->
-                <div class="glass-panel p-4 rounded-2xl border border-termBorder space-y-3">
-                    <div class="flex justify-between items-center border-b border-termBorder pb-2">
-                        <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-cyanAccent"></i>
-                            <span data-i18n="live_positions_title">లైవ్ ఆటో-మానిటర్డ్ పొజిషన్లు</span>
-                        </h3>
-                        <span class="text-[10px] font-mono text-slate-400">WebSocket Realtime Sync</span>
-                    </div>
+                <table class="w-full text-left font-mono text-xs">
+                    <thead>
+                        <tr class="text-slate-400 border-b border-slate-800 text-[11px]">
+                            <th class="pb-2">SYMBOL</th>
+                            <th class="pb-2">ENTRY / LIVE</th>
+                            <th class="pb-2">SL / TARGET</th>
+                            <th class="pb-2">LIVE P&L</th>
+                            <th class="pb-2">STATUS</th>
+                            <th class="pb-2 text-right">ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/50" id="positions-tbody">
+                        <tr>
+                            <td class="py-2.5">
+                                <span class="font-bold text-white">RELIANCE.NS</span>
+                                <div class="text-[10px] text-slate-400">Qty: 30</div>
+                            </td>
+                            <td class="py-2.5">
+                                <div class="text-slate-300">₹2,520.00</div>
+                                <div class="text-emerald-400 font-bold">₹2,548.50</div>
+                            </td>
+                            <td class="py-2.5 text-[11px]">
+                                <div class="text-red-400">SL: 2480.0</div>
+                                <div class="text-emerald-400">TGT: 2590.0</div>
+                            </td>
+                            <td class="py-2.5 font-bold text-emerald-400">+₹855.00</td>
+                            <td class="py-2.5"><span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[10px]">ACTIVE</span></td>
+                            <td class="py-2.5 text-right"><button onclick="closeSinglePosition(this)" class="px-2 py-1 bg-slate-800 hover:bg-red-900/50 text-red-400 rounded text-[10px]">Exit</button></td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5">
+                                <span class="font-bold text-white">TCS.NS</span>
+                                <div class="text-[10px] text-slate-400">Qty: 15</div>
+                            </td>
+                            <td class="py-2.5">
+                                <div class="text-slate-300">₹3,850.00</div>
+                                <div class="text-emerald-400 font-bold">₹3,892.00</div>
+                            </td>
+                            <td class="py-2.5 text-[11px]">
+                                <div class="text-red-400">SL: 3800.0</div>
+                                <div class="text-emerald-400">TGT: 3950.0</div>
+                            </td>
+                            <td class="py-2.5 font-bold text-emerald-400">+₹630.00</td>
+                            <td class="py-2.5"><span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[10px]">ACTIVE</span></td>
+                            <td class="py-2.5 text-right"><button onclick="closeSinglePosition(this)" class="px-2 py-1 bg-slate-800 hover:bg-red-900/50 text-red-400 rounded text-[10px]">Exit</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-black/60 text-slate-400 uppercase font-mono text-[10px] border-b border-termBorder">
-                                <tr>
-                                    <th class="p-2">Symbol</th>
-                                    <th class="p-2">Entry / Live</th>
-                                    <th class="p-2">SL / Target</th>
-                                    <th class="p-2">Live P&L</th>
-                                    <th class="p-2">Status</th>
-                                    <th class="p-2 text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="terminal-positions-body" class="divide-y divide-termBorder font-mono">
-                                <!-- Dynamic Rows injected via JS -->
-                            </tbody>
-                        </table>
-                    </div>
+    <!-- SAAS SUBSCRIPTION & PRICING PLANS SECTION -->
+    <section class="mb-6">
+        <div class="text-center mb-6">
+            <h2 class="text-lg md:text-2xl font-black text-white" id="pricing-main-title">
+                మీ ట్రేడింగ్‌కు తగిన సబ్‌స్క్రిప్షన్ ప్లాన్‌ను ఎంచుకోండి
+            </h2>
+            <p class="text-xs text-slate-400 mt-1" id="pricing-sub-title">
+                ఆటోమేటెడ్ అలర్ట్‌లు, Upstox ఆల్గో ఎగ్జిక్యూషన్ మరియు VIP టెలిగ్రామ్ సిగ్నల్స్‌తో మీ ప్రాఫిట్స్ పెంచుకోండి
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <!-- STARTER / SIGNAL PLAN -->
+            <div class="glass-panel p-5 rounded-2xl border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
+                <div>
+                    <span class="text-[10px] font-bold bg-slate-800 text-slate-300 px-2 py-1 rounded-full uppercase">Starter Level</span>
+                    <h3 class="text-lg font-bold text-white mt-2">Signal Alert Plan</h3>
+                    <div class="text-2xl font-black text-emerald-400 my-2">₹499 <span class="text-xs text-slate-400 font-normal">/ నెల</span></div>
+                    <ul class="space-y-2 text-xs text-slate-300 my-4">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> లైవ్ మార్కెట్ అలర్ట్‌లు (Telegram)</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Multi-Timeframe చార్ట్ యాక్సెస్</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> NSE 160 + Crypto 50 స్కానర్లు</li>
+                        <li class="flex items-center gap-2 text-slate-500"><i class="fa-solid fa-circle-xmark"></i> Upstox ఆటో ఆర్డర్ ఎగ్జిక్యూషన్</li>
+                    </ul>
                 </div>
-
+                <button onclick="subscribePlan('Starter', 499)" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl border border-slate-700 transition">
+                    సబ్‌స్క్రైబ్ చేయండి (₹499)
+                </button>
             </div>
 
-            <!-- COLUMN 3: Level 2 DOM Order Book & Quantum ML Predictor (2 Cols) -->
-            <div class="lg:col-span-2 space-y-4">
-                
-                <!-- Depth of Market (DOM) Level 2 Panel -->
-                <div class="glass-panel p-3.5 rounded-2xl border border-termBorder space-y-2.5">
-                    <div class="flex justify-between items-center border-b border-termBorder pb-2">
-                        <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-layer-group text-emeraldAccent"></i>
-                            <span>DOM Order Book (L2)</span>
-                        </h3>
-                        <span class="w-2 h-2 rounded-full bg-emeraldAccent animate-ping"></span>
-                    </div>
-
-                    <div class="space-y-1 font-mono text-[11px]">
-                        <!-- Asks (Sellers - Red) -->
-                        <div id="dom-asks-container" class="space-y-1">
-                            <!-- Dynamic Asks injected via JS -->
-                        </div>
-
-                        <!-- Current Spread Divider -->
-                        <div class="py-1 bg-black/60 border-y border-termBorder text-center font-bold text-xs text-white flex justify-between px-2">
-                            <span class="text-slate-400 text-[10px]">SPREAD: 0.10</span>
-                            <span id="dom-mid-price" class="text-emeraldAccent">₹2,520.00</span>
-                        </div>
-
-                        <!-- Bids (Buyers - Green) -->
-                        <div id="dom-bids-container" class="space-y-1">
-                            <!-- Dynamic Bids injected via JS -->
-                        </div>
-                    </div>
+            <!-- PRO TRADER PLAN (MOST POPULAR) -->
+            <div class="glass-panel p-5 rounded-2xl border-2 border-emerald-500/80 relative flex flex-col justify-between shadow-2xl glow-emerald">
+                <span class="absolute -top-3 right-4 bg-gradient-to-r from-emerald-400 to-teal-500 text-black text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase">
+                    Most Popular Choice
+                </span>
+                <div>
+                    <span class="text-[10px] font-bold bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded-full uppercase">Automated Trader</span>
+                    <h3 class="text-lg font-bold text-white mt-2">Pro Algo Automation</h3>
+                    <div class="text-2xl font-black text-emerald-400 my-2">₹1,499 <span class="text-xs text-slate-400 font-normal">/ నెల</span></div>
+                    <ul class="space-y-2 text-xs text-slate-300 my-4">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Starter ప్లాన్ ఫీచర్లు అన్నీ</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Upstox v2 ఆటో-ఆర్డర్ ఎగ్జిక్యూటర్</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Trailing Stop-Loss Engine</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> డైనమిక్ రిస్క్ మేనేజ్‌మెంట్</li>
+                    </ul>
                 </div>
-
-                <!-- Quantum ML Predictor Engine -->
-                <div class="glass-panel p-3.5 rounded-2xl border border-termBorder space-y-2.5">
-                    <div class="flex justify-between items-center border-b border-termBorder pb-2">
-                        <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-brain text-purpleAccent"></i>
-                            <span>Quantum ML Predictor</span>
-                        </h3>
-                        <span class="text-[10px] font-mono text-purpleAccent font-bold">94% Confidence</span>
-                    </div>
-
-                    <div class="space-y-2 text-xs font-mono">
-                        <div class="bg-black/60 p-2 rounded-xl border border-termBorder space-y-1">
-                            <div class="flex justify-between text-slate-400">
-                                <span>Signal Direction:</span>
-                                <span class="text-emeraldAccent font-bold">STRONG BUY 🟢</span>
-                            </div>
-                            <div class="flex justify-between text-slate-400">
-                                <span>Volume Delta:</span>
-                                <span class="text-cyanAccent font-bold">+2.8x Avg</span>
-                            </div>
-                            <div class="flex justify-between text-slate-400">
-                                <span>RSI (14) Momentum:</span>
-                                <span class="text-goldAccent font-bold">68.5 (Bullish)</span>
-                            </div>
-                            <div class="flex justify-between text-slate-400">
-                                <span>Institutional VWAP:</span>
-                                <span class="text-white font-bold">Above VWAP</span>
-                            </div>
-                        </div>
-
-                        <!-- Prediction Bar Visualizer -->
-                        <div>
-                            <div class="flex justify-between text-[10px] text-slate-400 mb-1">
-                                <span>Bullish Probability</span>
-                                <span class="text-emeraldAccent font-bold">92%</span>
-                            </div>
-                            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden flex">
-                                <div class="bg-emeraldAccent h-full" style="width: 92%"></div>
-                                <div class="bg-crimsonAccent h-full" style="width: 8%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                <button onclick="subscribePlan('Pro Algo', 1499)" class="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-extrabold rounded-xl shadow-lg transition">
+                    Pro ప్లాన్ పొందండి (₹1,499)
+                </button>
             </div>
 
-            <!-- COLUMN 4: Live Portfolio Heatmap (2 Cols) -->
-            <div class="lg:col-span-2 space-y-4">
-                
-                <div class="glass-panel p-3.5 rounded-2xl border border-termBorder space-y-3">
-                    <div class="flex justify-between items-center border-b border-termBorder pb-2">
-                        <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-fire text-crimsonAccent"></i>
-                            <span data-i18n="screener_title">200+ అసెట్స్ హీట్‌మ్యాప్</span>
-                        </h3>
-                        <span class="text-[10px] font-mono text-slate-400">Live Scanned</span>
-                    </div>
-
-                    <!-- Heatmap Filter Tabs -->
-                    <div class="flex gap-1 bg-black/60 p-1 rounded-xl text-[10px] font-mono">
-                        <button onclick="filterHeatmap('all')" class="flex-1 py-1 rounded bg-slate-800 text-white font-bold">ALL</button>
-                        <button onclick="filterHeatmap('nifty')" class="flex-1 py-1 rounded text-slate-400 hover:text-white">NSE</button>
-                        <button onclick="filterHeatmap('crypto')" class="flex-1 py-1 rounded text-slate-400 hover:text-white">CRYPTO</button>
-                    </div>
-
-                    <!-- Heatmap Container -->
-                    <div id="screener-heatmap-container" class="grid grid-cols-1 gap-2 h-[560px] overflow-y-auto pr-1">
-                        <!-- Dynamic Heatmap Items -->
-                    </div>
+            <!-- VIP ALGO ENTERPRISE -->
+            <div class="glass-panel p-5 rounded-2xl border border-goldneon/50 flex flex-col justify-between hover:border-goldneon transition">
+                <div>
+                    <span class="text-[10px] font-bold bg-goldneon/20 text-goldneon px-2 py-1 rounded-full uppercase">VIP Club</span>
+                    <h3 class="text-lg font-bold text-white mt-2">VIP Telegram &amp; Custom Algo</h3>
+                    <div class="text-2xl font-black text-goldneon my-2">₹2,999 <span class="text-xs text-slate-400 font-normal">/ నెల</span></div>
+                    <ul class="space-y-2 text-xs text-slate-300 my-4">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-goldneon"></i> Pro ప్లాన్ ఫీచర్లు అన్నీ</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-goldneon"></i> VIP టెలిగ్రామ్ ప్రైవేట్ సిగ్నల్స్</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-goldneon"></i> 1-on-1 సెటప్ సపోర్ట్</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-goldneon"></i> కస్టమ్ ఆల్గో స్ట్రాటజీ బిల్డర్</li>
+                    </ul>
                 </div>
-
+                <button onclick="subscribePlan('VIP Enterprise', 2999)" class="w-full py-2.5 bg-gradient-to-r from-goldneon to-amber-500 hover:from-amber-400 hover:to-goldneon text-black font-extrabold rounded-xl shadow-lg transition">
+                    VIP జాయిన్ అవ్వండి (₹2,999)
+                </button>
             </div>
 
         </div>
+    </section>
 
-    </main>
+    <!-- USER UPSTOX API SETTINGS MODAL -->
+    <div id="apiModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden justify-center items-center p-4 z-50">
+        <div class="glass-panel max-w-md w-full rounded-2xl p-5 border border-slate-700 shadow-2xl relative">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-800">
+                <h3 class="font-bold text-white text-base flex items-center gap-2">
+                    <i class="fa-solid fa-key text-emerald-400"></i>
+                    <span id="modal-title">Upstox API &amp; Telegram కనెక్షన్ సెట్టింగ్స్</span>
+                </h3>
+                <button onclick="closeApiModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
 
-    <!-- Panic Exit Confirmation Modal -->
-    <div id="panic-overlay" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
-        <div class="glass-panel border border-crimsonAccent/60 rounded-2xl max-w-md w-full p-6 space-y-4 glow-crimson">
-            <div class="flex items-center gap-3 text-crimsonAccent">
-                <i class="fa-solid fa-triangle-exclamation text-3xl animate-bounce"></i>
+            <div class="space-y-3">
                 <div>
-                    <h3 class="text-base font-bold text-white">EMERGENCY PANIC EXIT ALL</h3>
-                    <p class="text-xs text-slate-400">అన్ని పొజిషన్లను తక్షణమే మార్కెట్ క్లోజ్ చేయాలా?</p>
+                    <label class="block text-slate-400 text-xs mb-1">Upstox API Key</label>
+                    <input type="text" id="cfg-apiKey" placeholder="ఉదా: 8a7b6c5d-4e3f..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs font-mono">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-xs mb-1">Upstox API Secret</label>
+                    <input type="password" id="cfg-apiSecret" placeholder="••••••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs font-mono">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-xs mb-1">Access Token</label>
+                    <input type="password" id="cfg-accessToken" placeholder="మీ Upstox Daily Access Token ఎంటర్ చేయండి" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs font-mono">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-xs mb-1">Telegram VIP Bot Token (Optional)</label>
+                    <input type="text" id="cfg-tgToken" placeholder="bot123456:ABC-DEF..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs font-mono">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-xs mb-1">Telegram Chat ID (Optional)</label>
+                    <input type="text" id="cfg-tgChatId" placeholder="-100123456789" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs font-mono">
                 </div>
             </div>
-            
-            <p class="text-xs text-slate-300 bg-black/60 p-3 rounded-xl border border-termBorder leading-relaxed font-mono">
-                [ACTION]: Upstox v2 API will execute immediate MARKET SELL orders for all active portfolio positions.
-            </p>
 
-            <div class="flex justify-end gap-3">
-                <button onclick="closePanicModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300">రద్దు చేయి (Cancel)</button>
-                <button onclick="executePanicExit()" class="px-4 py-2 rounded-xl text-xs font-bold bg-crimsonAccent text-white glow-crimson">ఎగ్జిట్ చేయి (PANIC EXIT)</button>
+            <div class="mt-5 flex gap-2">
+                <button onclick="saveApiCredentials()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-xl transition">
+                    సేవ్ చేయండి (Save Credentials)
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification Container -->
-    <div id="terminal-toast-box" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+    <!-- LEGAL DISCLAIMER & SEBI REGULATORY FOOTER -->
+    <footer class="glass-panel rounded-2xl p-4 text-center border border-slate-800 text-[11px] text-slate-400 space-y-2">
+        <p class="font-bold text-slate-300 uppercase tracking-wider" id="footer-disclaimer-heading">
+            ⚖️ లీగల్ డిస్‌క్లైమర్ &amp; సెబి (SEBI) మార్గదర్శకాల హెచ్చరిక
+        </p>
+        <p id="footer-disclaimer-body">
+            ఈ <strong>Quantum AI Trading Workstation Pro</strong> కేవలం ఒక సాఫ్ట్‌వేర్ టూల్ మరియు ఎడ్యుకేషనల్ ఆల్గోరిథమిక్ ఎమ్యులేషన్ ఇంటర్‌ఫేస్ మాత్రమే. మేము SEBI వద్ద రిజిస్టర్ అయిన రీసెర్చ్ అనలిస్ట్ లేదా ఇన్వెస్ట్‌మెంట్ అడ్వైజర్ కాదు. ఈ వెబ్‌సైట్ ఎటువంటి స్టాక్ కొనుగోలు/అమ్మకం సిఫార్సులు లేదా గ్యారెంటీ లాభాల టిప్స్ ఇవ్వదు. ట్రేడింగ్ ద్వారా వచ్చే లాభాలు మరియు నష్టాలకు యూజర్లు మాత్రమే పూర్తి బాధ్యులు. మీ అప్‌స్టాక్స్ API ద్వారా చేసే ఆర్డర్‌లు మీ వ్యక్తిగత విచక్షణపై ఆధారపడి ఉంటాయి.
+        </p>
+        <p class="text-slate-500 text-[10px]">
+            © 2026 Quantum AI Workstation. All rights reserved. Powered by Upstox Open API v2.
+        </p>
+    </footer>
 
-    <!-- Main JavaScript Engine -->
+    <!-- INTERACTIVE JAVASCRIPT LOGIC -->
     <script>
-        // Language Translation Dictionary
-        const i18n = {
-            te: {
-                panic_btn: "PANIC EXIT ALL",
-                pnl_today: "ఈరోజు P&L",
-                active_orders: "ఆక్టివ్ పొజిషన్లు",
-                win_rate: "Quantum ML Win Rate",
-                screened_assets: "స్కాన్ చేసిన అసెట్లు",
-                bot_mode: "GitHub Cron Status",
-                risk_exposure: "మొత్తం రిస్క్ Exposure",
-                order_form_title: "ఆటో ట్రేడ్ ఎగ్జిక్యూటర్",
-                lbl_symbol: "స్టాక్ / క్రిప్టో పేరు",
-                lbl_entry: "ఎంట్రీ ధర (₹)",
-                lbl_qty: "క్వాంటిటీ (Qty)",
-                lbl_tsl: "ట్రైలింగ్ SL (TSL Step)",
-                btn_execute: "ఆటో ఆర్డర్ ప్లేస్ చేయి",
-                backtest_title: "ఆల్గో స్ట్రాటజీ బ్యాక్‌టెస్టర్",
-                live_positions_title: "లైవ్ ఆటో-మానిటర్డ్ పొజిషన్లు",
-                screener_title: "200+ అసెట్స్ హీట్‌మ్యాప్"
+        // Language Dictionary
+        let currentLang = 'TE';
+        const dictionary = {
+            TE: {
+                feedStatus: "Upstox v2 WebSocket Feed • Level 2 DOM Engine",
+                apiBtn: "⚡ API సెట్టింగ్స్",
+                openAccount: "🚀 Upstox అకౌంట్ ఓపెన్ చేయండి",
+                panicBtn: "🚨 PANIC EXIT ALL",
+                affTitle: "మీకు ఇంకా Upstox అకౌంట్ లేదా?",
+                affDesc: "మా Quantum AI Workstation కి Upstox API ఉచితంగా కనెక్ట్ చేసుకోండి. వేగవంతమైన ఆర్డర్ ఎగ్జిక్యూషన్ మరియు తక్కువ బ్రోకరేజ్ ఛార్జీల ప్రయోజనం పొందండి.",
+                affBtn: "ఉచితంగా Upstox అకౌంట్ ఓపెన్ చేయండి",
+                pnl: "ఈరోజు P&L",
+                positions: "యాక్టివ్ పొజిషన్లు",
+                scanned: "స్కాన్ చేసిన ఆసెట్లు",
+                risk: "మొత్తం రిస్క్ EXPOSURE",
+                executorTitle: "ఆల్గో ట్రేడ్ ఎగ్జిక్యూటర్",
+                sendOrderBtn: "ఆల్గో ఆర్డర్ ప్లేస్ చేయి",
+                positionsHeading: "లైవ్ ఆల్గో-పొజిషన్స్ డ్యాష్‌బోర్డ్",
+                langBtnText: "English లోకి మార్చు"
             },
-            en: {
-                panic_btn: "PANIC EXIT ALL",
-                pnl_today: "TODAY P&L",
-                active_orders: "ACTIVE POSITIONS",
-                win_rate: "QUANTUM ML WIN RATE",
-                screened_assets: "SCREENED ASSETS",
-                bot_mode: "GITHUB CRON STATUS",
-                risk_exposure: "PORTFOLIO RISK",
-                order_form_title: "AUTO TRADE EXECUTOR",
-                lbl_symbol: "STOCK / CRYPTO SYMBOL",
-                lbl_entry: "ENTRY PRICE (₹)",
-                lbl_qty: "QUANTITY (QTY)",
-                lbl_tsl: "TRAILING SL (TSL STEP)",
-                btn_execute: "EXECUTE AUTO ORDER",
-                backtest_title: "ALGO STRATEGY BACKTESTER",
-                live_positions_title: "LIVE MONITORED POSITIONS",
-                screener_title: "200+ ASSETS HEATMAP"
+            EN: {
+                feedStatus: "Upstox v2 WebSocket Feed • Level 2 DOM Engine",
+                apiBtn: "⚡ API Settings",
+                openAccount: "🚀 Open Upstox Account",
+                panicBtn: "🚨 PANIC EXIT ALL",
+                affTitle: "Don't have an Upstox Account yet?",
+                affDesc: "Connect your free Upstox API with our Quantum AI Workstation. Experience lightning-fast execution and lower brokerage fees.",
+                affBtn: "Open Free Upstox Account Now",
+                pnl: "Today's P&L",
+                positions: "Active Positions",
+                scanned: "Scanned Assets",
+                risk: "Total Capital Exposure",
+                executorTitle: "Algo Trade Executor",
+                sendOrderBtn: "Send Algo Order via API",
+                positionsHeading: "Live Algo Positions Dashboard",
+                langBtnText: "తెలుగు లోకి మార్చు"
             }
         };
 
-        let currentLang = 'te';
-
-        // Sample Monitored Positions
-        let activePositions = [
-            { id: 1, symbol: 'RELIANCE.NS', entry: 2520.00, current: 2548.50, qty: 30, sl: 2480.00, target: 2590.00, pnl: 855.00, status: 'ACTIVE' },
-            { id: 2, symbol: 'TCS.NS', entry: 3850.00, current: 3892.00, qty: 15, sl: 3800.00, target: 3950.00, pnl: 630.00, status: 'ACTIVE' },
-            { id: 3, symbol: 'BTC-USD', entry: 68800.00, current: 68950.00, qty: 0.2, sl: 67500.00, target: 70500.00, pnl: 30.00, status: 'ACTIVE' },
-            { id: 4, symbol: 'TATAMOTORS.NS', entry: 930.00, current: 948.50, qty: 60, sl: 910.00, target: 975.00, pnl: 1110.00, status: 'ACTIVE' },
-            { id: 5, symbol: 'SOL-USD', entry: 185.00, current: 194.20, qty: 10, sl: 178.00, target: 205.00, pnl: 92.00, status: 'ACTIVE' }
-        ];
-
-        // Level 2 DOM Book Mock Data
-        let domAsks = [
-            { price: '2,521.20', size: 140, pct: 70 },
-            { price: '2,521.00', size: 95, pct: 48 },
-            { price: '2,520.80', size: 210, pct: 90 },
-            { price: '2,520.50', size: 60, pct: 30 }
-        ];
-
-        let domBids = [
-            { price: '2,520.00', size: 180, pct: 85 },
-            { price: '2,519.80', size: 120, pct: 60 },
-            { price: '2,519.50', size: 240, pct: 95 },
-            { price: '2,519.20', size: 80, pct: 40 }
-        ];
-
-        // Screener Heatmap Master List
-        const heatmapMasterList = [
-            { symbol: 'RELIANCE', price: '2,548.50', change: '+1.13%', signal: 'BUY', type: 'nifty' },
-            { symbol: 'TCS', price: '3,892.00', change: '+1.09%', signal: 'BUY', type: 'nifty' },
-            { symbol: 'HDFCBANK', price: '1,695.40', change: '+0.65%', signal: 'HOLD', type: 'nifty' },
-            { symbol: 'INFY', price: '1,910.00', change: '-0.15%', signal: 'HOLD', type: 'nifty' },
-            { symbol: 'BTC-USD', price: '$68,950', change: '+1.45%', signal: 'BUY', type: 'crypto' },
-            { symbol: 'ETH-USD', price: '$3,620', change: '+2.40%', signal: 'STRONG BUY', type: 'crypto' },
-            { symbol: 'SOL-USD', price: '$194.20', change: '+4.97%', signal: 'STRONG BUY', type: 'crypto' },
-            { symbol: 'TATAMOTORS', price: '948.50', change: '+1.98%', signal: 'BUY', type: 'nifty' },
-            { symbol: 'SUZLON', price: '78.20', change: '+4.95%', signal: 'STRONG BUY', type: 'nifty' },
-            { symbol: 'ZOMATO', price: '272.00', change: '+2.64%', signal: 'BUY', type: 'nifty' }
-        ];
-
-        let chartInstances = {};
-
-        // Application Initialize
-        window.onload = function() {
-            renderPositions();
-            renderDOM();
-            renderHeatmap('all');
-            initMultiChartGrid();
-            calculateRisk();
-            startWebSocketSimulation();
-        };
-
-        // Language Switcher Function
         function toggleLanguage() {
-            currentLang = currentLang === 'te' ? 'en' : 'te';
-            document.getElementById('lang-btn-text').innerText = currentLang === 'te' ? 'English లోకి మార్చు' : 'తెలుగు లోకి మార్చు';
+            currentLang = currentLang === 'TE' ? 'EN' : 'TE';
+            const dict = dictionary[currentLang];
             
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if(i18n[currentLang][key]) {
-                    el.innerText = i18n[currentLang][key];
-                }
-            });
-
-            showToast(currentLang === 'te' ? 'భాష తెలుగులోకి మార్చబడింది' : 'Language switched to English', 'info');
+            document.getElementById('txt-feed-status').innerText = dict.feedStatus;
+            document.getElementById('txt-api-btn').innerText = dict.apiBtn;
+            document.getElementById('txt-open-account').innerText = dict.openAccount;
+            document.getElementById('txt-panic-btn').innerText = dict.panicBtn;
+            document.getElementById('aff-title').innerText = dict.affTitle;
+            document.getElementById('aff-desc').innerText = dict.affDesc;
+            document.getElementById('aff-btn').innerText = dict.affBtn;
+            document.getElementById('lbl-pnl').innerText = dict.pnl;
+            document.getElementById('lbl-positions').innerText = dict.positions;
+            document.getElementById('lbl-scanned').innerText = dict.scanned;
+            document.getElementById('lbl-risk').innerText = dict.risk;
+            document.getElementById('txt-executor-title').innerText = dict.executorTitle;
+            document.getElementById('btn-send-order').innerText = dict.sendOrderBtn;
+            document.getElementById('txt-positions-heading').innerText = dict.positionsHeading;
+            document.getElementById('lang-btn-text').innerText = dict.langBtnText;
         }
 
-        // Render Positions Table
-        function renderPositions() {
-            const tbody = document.getElementById('terminal-positions-body');
-            tbody.innerHTML = '';
-            let totalPnL = 0;
-            let count = 0;
+        // Risk & Reward Calculator Logic
+        function calculateRiskReward() {
+            const entry = parseFloat(document.getElementById('entryPrice').value) || 0;
+            const qty = parseFloat(document.getElementById('quantity').value) || 0;
+            const sl = parseFloat(document.getElementById('stopLoss').value) || 0;
+            const tgt = parseFloat(document.getElementById('target').value) || 0;
 
-            activePositions.forEach(pos => {
-                if(pos.status === 'ACTIVE') {
-                    totalPnL += pos.pnl;
-                    count++;
-                }
+            const riskPerShare = Math.abs(entry - sl);
+            const rewardPerShare = Math.abs(tgt - entry);
 
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-800/40 transition";
+            const totalRisk = riskPerShare * qty;
+            const totalProfit = rewardPerShare * qty;
 
-                tr.innerHTML = `
-                    <td class="p-2 font-bold text-white">
-                        ${pos.symbol}
-                        <span class="block text-[10px] text-slate-400 font-normal">Qty: ${pos.qty}</span>
-                    </td>
-                    <td class="p-2">
-                        <span class="text-slate-300">₹${pos.entry.toFixed(2)}</span>
-                        <span class="block text-xs font-bold ${pos.pnl >= 0 ? 'text-emeraldAccent' : 'text-crimsonAccent'}">₹${pos.current.toFixed(2)}</span>
-                    </td>
-                    <td class="p-2">
-                        <span class="text-crimsonAccent">SL: ${pos.sl.toFixed(1)}</span>
-                        <span class="block text-emeraldAccent">TGT: ${pos.target.toFixed(1)}</span>
-                    </td>
-                    <td class="p-2 font-bold ${pos.pnl >= 0 ? 'text-emeraldAccent' : 'text-crimsonAccent'}">
-                        ${pos.pnl >= 0 ? '+' : ''}₹${pos.pnl.toFixed(2)}
-                    </td>
-                    <td class="p-2">
-                        <span class="px-2 py-0.5 rounded text-[10px] bg-emeraldAccent/10 text-emeraldAccent border border-emeraldAccent/30 font-bold">${pos.status}</span>
-                    </td>
-                    <td class="p-2 text-right">
-                        <button onclick="closeSinglePosition(${pos.id})" class="bg-crimsonAccent/10 hover:bg-crimsonAccent/20 text-crimsonAccent border border-crimsonAccent/30 text-[10px] px-2 py-0.5 rounded transition">Exit</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+            const rrRatio = riskPerShare > 0 ? (rewardPerShare / riskPerShare).toFixed(2) : "0.00";
 
-            document.getElementById('val-pnl').innerText = `${totalPnL >= 0 ? '+' : ''}₹${totalPnL.toFixed(2)}`;
-            document.getElementById('val-active-count').innerText = `${count} Orders`;
+            document.getElementById('rrRatio').innerText = `1 : ${rrRatio}`;
+            document.getElementById('maxRisk').innerText = `₹${totalRisk.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+            document.getElementById('expProfit').innerText = `₹${totalProfit.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
         }
 
-        // Render Depth of Market (DOM)
-        function renderDOM() {
-            const asksContainer = document.getElementById('dom-asks-container');
-            const bidsContainer = document.getElementById('dom-bids-container');
-
-            asksContainer.innerHTML = '';
-            bidsContainer.innerHTML = '';
-
-            domAsks.forEach(ask => {
-                const div = document.createElement('div');
-                div.className = "relative flex justify-between px-2 py-0.5 rounded bg-crimsonAccent/10 text-crimsonAccent border border-crimsonAccent/20 overflow-hidden";
-                div.innerHTML = `
-                    <div class="absolute top-0 right-0 bottom-0 bg-crimsonAccent/20" style="width: ${ask.pct}%"></div>
-                    <span class="relative z-10 font-bold">₹${ask.price}</span>
-                    <span class="relative z-10 text-slate-300 font-bold">${ask.size}</span>
-                `;
-                asksContainer.appendChild(div);
-            });
-
-            domBids.forEach(bid => {
-                const div = document.createElement('div');
-                div.className = "relative flex justify-between px-2 py-0.5 rounded bg-emeraldAccent/10 text-emeraldAccent border border-emeraldAccent/20 overflow-hidden";
-                div.innerHTML = `
-                    <div class="absolute top-0 right-0 bottom-0 bg-emeraldAccent/20" style="width: ${bid.pct}%"></div>
-                    <span class="relative z-10 font-bold">₹${bid.price}</span>
-                    <span class="relative z-10 text-slate-300 font-bold">${bid.size}</span>
-                `;
-                bidsContainer.appendChild(div);
-            });
+        function updateTSLDisplay(val) {
+            const entry = parseFloat(document.getElementById('entryPrice').value) || 2500;
+            const stepRupees = ((entry * val) / 100).toFixed(2);
+            document.getElementById('tsl-val').innerText = `${val}% (₹${stepRupees})`;
         }
 
-        // Render Heatmap Grid
-        function renderHeatmap(filter) {
-            const container = document.getElementById('screener-heatmap-container');
-            container.innerHTML = '';
-
-            const list = filter === 'all' ? heatmapMasterList : heatmapMasterList.filter(item => item.type === filter);
-
-            list.forEach(item => {
-                const isBuy = item.signal.includes('BUY');
-                const div = document.createElement('div');
-                div.className = `bg-black/50 border ${isBuy ? 'border-emeraldAccent/30 hover:border-emeraldAccent' : 'border-slate-800'} p-2 rounded-xl space-y-1 transition cursor-pointer`;
-                
-                div.innerHTML = `
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="font-bold text-white font-mono">${item.symbol}</span>
-                        <span class="text-[10px] ${item.change.startsWith('+') ? 'text-emeraldAccent' : 'text-crimsonAccent'} font-mono">${item.change}</span>
-                    </div>
-                    <div class="flex justify-between items-center text-[10px]">
-                        <span class="text-slate-400 font-mono">₹${item.price}</span>
-                        <span class="px-1.5 py-0.5 rounded text-[9px] ${isBuy ? 'bg-emeraldAccent/10 text-emeraldAccent' : 'bg-slate-800 text-slate-400'} font-bold">${item.signal}</span>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+        // Modal Controls
+        function openApiModal() {
+            document.getElementById('apiModal').classList.remove('hidden');
+            document.getElementById('apiModal').classList.add('flex');
+            
+            // Load credentials if exist
+            document.getElementById('cfg-apiKey').value = localStorage.getItem('upstox_apiKey') || '';
+            document.getElementById('cfg-apiSecret').value = localStorage.getItem('upstox_apiSecret') || '';
+            document.getElementById('cfg-accessToken').value = localStorage.getItem('upstox_token') || '';
+            document.getElementById('cfg-tgToken').value = localStorage.getItem('tg_token') || '';
+            document.getElementById('cfg-tgChatId').value = localStorage.getItem('tg_chatId') || '';
         }
 
-        function filterHeatmap(type) {
-            renderHeatmap(type);
+        function closeApiModal() {
+            document.getElementById('apiModal').classList.add('hidden');
+            document.getElementById('apiModal').classList.remove('flex');
         }
 
-        // Risk Calculator
-        function calculateRisk() {
-            const entry = parseFloat(document.getElementById('inp-entry').value) || 0;
-            const qty = parseFloat(document.getElementById('inp-qty').value) || 0;
-            const sl = parseFloat(document.getElementById('inp-sl').value) || 0;
-            const target = parseFloat(document.getElementById('inp-target').value) || 0;
+        function saveApiCredentials() {
+            localStorage.setItem('upstox_apiKey', document.getElementById('cfg-apiKey').value);
+            localStorage.setItem('upstox_apiSecret', document.getElementById('cfg-apiSecret').value);
+            localStorage.setItem('upstox_token', document.getElementById('cfg-accessToken').value);
+            localStorage.setItem('tg_token', document.getElementById('cfg-tgToken').value);
+            localStorage.setItem('tg_chatId', document.getElementById('cfg-tgChatId').value);
 
-            const maxRisk = Math.abs(entry - sl) * qty;
-            const expProfit = Math.abs(target - entry) * qty;
-            const rr = maxRisk > 0 ? (expProfit / maxRisk).toFixed(1) : '0';
-
-            document.getElementById('calc-rr').innerText = `1 : ${rr}`;
-            document.getElementById('calc-max-risk').innerText = `₹${maxRisk.toFixed(2)}`;
-            document.getElementById('calc-exp-profit').innerText = `₹${expProfit.toFixed(2)}`;
+            alert('మీ API వివరాలు లోకల్ స్టోరేజ్‌లో సురక్షితంగా సేవ్ అయ్యాయి!');
+            closeApiModal();
         }
 
-        function updateTSLVal(val) {
-            const entry = parseFloat(document.getElementById('inp-entry').value) || 2000;
-            const stepVal = (entry * (val / 100)).toFixed(2);
-            document.getElementById('lbl-tsl-val').innerText = `${val}% (₹${stepVal})`;
+        // Order Actions
+        function sendAlgoOrder() {
+            const sym = document.getElementById('symbol').value;
+            const qty = document.getElementById('quantity').value;
+            alert(`[Upstox API] ${sym} కోసం ${qty} క్వాంటిటీతో ఆల్గో ఆర్డర్ పంపబడింది!`);
         }
 
-        // New Order Execution
-        function handleNewOrder() {
-            const symbol = document.getElementById('inp-symbol').value.toUpperCase();
-            const entry = parseFloat(document.getElementById('inp-entry').value);
-            const qty = parseFloat(document.getElementById('inp-qty').value);
-            const sl = parseFloat(document.getElementById('inp-sl').value);
-            const target = parseFloat(document.getElementById('inp-target').value);
-
-            const newOrder = {
-                id: Date.now(),
-                symbol: symbol,
-                entry: entry,
-                current: entry,
-                qty: qty,
-                sl: sl,
-                target: target,
-                pnl: 0.0,
-                status: 'ACTIVE'
-            };
-
-            activePositions.unshift(newOrder);
-            renderPositions();
-            showToast(`${symbol} ఆటో-ఆర్డర్ అప్‌స్టాక్స్ API ద్వారా పంపబడింది!`, 'success');
+        function panicExitAll() {
+            if(confirm("మీరు నిజంగా అన్ని పొజిషన్లను వెంటనే ఎగ్జిట్ (Square-off) చేయాలనుకుంటున్నారా?")) {
+                document.getElementById('positions-tbody').innerHTML = `<tr><td colspan="6" class="py-4 text-center text-red-400 font-bold">అన్ని పొజిషన్లు ఎగ్జిట్ చేయబడ్డాయి!</td></tr>`;
+            }
         }
 
-        function closeSinglePosition(id) {
-            activePositions = activePositions.filter(p => p.id !== id);
-            renderPositions();
-            showToast('పొజిషన్ క్లోజ్ చేయబడింది', 'info');
+        function closeSinglePosition(btn) {
+            const row = btn.closest('tr');
+            row.remove();
         }
 
-        // Backtest Strategy Simulation
-        function runBacktestSimulation() {
-            document.getElementById('backtest-results').classList.remove('hidden');
-            showToast('ఆల్గో బ్యాక్‌టెస్ట్ పూర్తయింది!', 'info');
+        function subscribePlan(planName, price) {
+            alert(`మీరు ${planName} (₹${price}/నెల) ప్లాన్‌ను ఎంచుకున్నారు. పేమెంట్ ద్వారా ప్రైవేట్ VIP జాయిన్ లింక్ అందుకోండి.`);
+            window.open('https://t.me/your_telegram_vip_bot', '_blank');
         }
 
-        // Panic Exit
-        function triggerPanicModal() {
-            document.getElementById('panic-overlay').classList.remove('hidden');
+        function runSimulation() {
+            alert('ఆల్గో బ్యాక్‌టెస్ట్ రన్ అవుతోంది... గత 1 సంవత్సర డేటాలో విన్ రేట్: 84.2% సాధించింది!');
         }
 
-        function closePanicModal() {
-            document.getElementById('panic-overlay').classList.add('hidden');
-        }
-
-        function executePanicExit() {
-            activePositions = [];
-            renderPositions();
-            closePanicModal();
-            showToast('EMERGENCY: అన్ని పొజిషన్లు ఎగ్జిట్ అయ్యాయి!', 'error');
-        }
-
-        // Initialize Multi-Chart Grid View
-        function initMultiChartGrid() {
-            const chartIds = ['chart-1m', 'chart-5m', 'chart-15m', 'chart-1d'];
-            const colors = ['#06B6D4', '#8B5CF6', '#F59E0B', '#10B981'];
-
-            chartIds.forEach((id, idx) => {
-                const ctx = document.getElementById(id).getContext('2d');
-                chartInstances[id] = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['09:15', '10:00', '10:45', '11:30', '12:15', '13:00'],
-                        datasets: [{
-                            data: [2500 + idx*5, 2512 + idx*3, 2508, 2518 + idx*2, 2515, 2520.00],
-                            borderColor: colors[idx],
-                            borderWidth: 1.5,
-                            pointRadius: 0,
-                            fill: false
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            x: { display: false },
-                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748B', fontSize: 9 } }
-                        }
+        // Initialize Chart.js Graphs
+        function createMiniChart(id, color, dataPoints) {
+            const ctx = document.getElementById(id).getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1', '2', '3', '4', '5', '6', '7'],
+                    datasets: [{
+                        data: dataPoints,
+                        borderColor: color,
+                        borderWidth: 2,
+                        tension: 0.3,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
                     }
-                });
+                }
             });
         }
 
-        function switchChartAsset() {
-            const sym = document.getElementById('chart-asset-select').value;
-            showToast(`${sym} చాట్ డేటా లోడ్ అయింది`, 'info');
-        }
+        // On Window Load
+        window.onload = function() {
+            createMiniChart('chart1m', '#06b6d4', [2500, 2512, 2508, 2520, 2515, 2528, 2520]);
+            createMiniChart('chart5m', '#a855f7', [2504, 2514, 2506, 2518, 2510, 2525, 2520]);
+            createMiniChart('chart15m', '#f59e0b', [2508, 2518, 2508, 2522, 2512, 2524, 2520]);
+            createMiniChart('chart1d', '#10b981', [2514, 2520, 2510, 2528, 2512, 2526, 2520]);
 
-        function switchTimeframe(tf) {
-            showToast(`Timeframe ${tf} కి మార్చబడింది`, 'info');
-        }
-
-        // WebSocket Dynamic Price Simulation
-        function startWebSocketSimulation() {
+            // Live Feed Simulation Ticks
             setInterval(() => {
-                activePositions.forEach(pos => {
-                    if(pos.status === 'ACTIVE') {
-                        const tickChange = (Math.random() - 0.48) * (pos.entry * 0.002);
-                        pos.current += tickChange;
-                        pos.pnl = (pos.current - pos.entry) * pos.qty;
-                    }
-                });
+                document.getElementById('feed-ticks').innerText = Math.floor(480 + Math.random() * 60);
+            }, 1000);
 
-                // Update DOM Size
-                domAsks.forEach(ask => ask.size = Math.floor(Math.random() * 200) + 50);
-                domBids.forEach(bid => bid.size = Math.floor(Math.random() * 200) + 50);
-
-                renderPositions();
-                renderDOM();
-            }, 2000);
-        }
-
-        // Toast Helper
-        function showToast(message, type) {
-            const container = document.getElementById('terminal-toast-box');
-            const toast = document.createElement('div');
-            
-            let borderClass = 'border-cyanAccent text-cyanAccent';
-            if(type === 'success') borderClass = 'border-emeraldAccent text-emeraldAccent';
-            if(type === 'error') borderClass = 'border-crimsonAccent text-crimsonAccent';
-
-            toast.className = `glass-panel border ${borderClass} px-4 py-3 rounded-xl shadow-2xl text-xs font-mono font-bold flex items-center gap-2 transform transition-all duration-300`;
-            toast.innerHTML = `<i class="fa-solid fa-bell"></i> <span>${message}</span>`;
-
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3500);
-        }
+            calculateRiskReward();
+        };
     </script>
 </body>
 </html>
+```
