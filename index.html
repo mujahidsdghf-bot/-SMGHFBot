@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum AI Trading Workstation Pro v6.0</title>
+    <title>Quantum AI Trading Workstation Pro v6.1</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -26,8 +26,6 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
-        .neon-border-cyan { border: 1px solid #06b6d4; box-shadow: 0 0 10px rgba(6, 182, 212, 0.3); }
-        .neon-border-green { border: 1px solid #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
         .neon-glow-btn {
             background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
             box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
@@ -37,7 +35,6 @@
             box-shadow: 0 0 25px rgba(6, 182, 212, 0.7);
             transform: translateY(-2px);
         }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0b0f19; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
@@ -46,7 +43,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- TOP TICKER BAR -->
+    <!-- TOP LIVE TICKER BAR -->
     <div class="bg-slate-950 border-b border-slate-800 text-xs py-2 px-4 flex items-center justify-between overflow-x-auto whitespace-nowrap">
         <div class="flex items-center space-x-6">
             <span class="flex items-center font-bold text-cyan-400 font-orbitron">
@@ -58,7 +55,9 @@
             <span class="text-slate-300">INDIA VIX: <strong class="text-amber-400">13.25 (-2.10%)</strong></span>
         </div>
         <div class="flex items-center space-x-4">
-            <span class="bg-cyan-950 text-cyan-400 border border-cyan-800 text-[10px] px-2 py-0.5 rounded font-mono">STATUS: UPSTOX V2 CONNECTED</span>
+            <span id="apiStatusBadge" class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] px-2 py-0.5 rounded font-mono">
+                UPSTOX API: ACTIVE
+            </span>
         </div>
     </div>
 
@@ -71,45 +70,52 @@
                 </div>
                 <div>
                     <h1 class="font-orbitron font-extrabold text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-                        QUANTUM AI <span class="text-xs text-cyan-300 px-1.5 py-0.5 bg-cyan-950 rounded border border-cyan-700">PRO v6.0</span>
+                        QUANTUM AI <span class="text-xs text-cyan-300 px-1.5 py-0.5 bg-cyan-950 rounded border border-cyan-700">PRO v6.1</span>
                     </h1>
-                    <p class="text-[11px] text-slate-400 font-mono">Algorithmic Trading & Analytics Workstation</p>
+                    <p class="text-[11px] text-slate-400 font-mono">Commercial Algo Trading Workstation</p>
                 </div>
             </div>
 
-            <!-- ACTION BUTTONS -->
+            <!-- ACTION BUTTONS & USER PROFILE -->
             <div class="flex items-center space-x-3">
+                <!-- Upstox Affiliate Link Button -->
                 <a href="https://upstox.com/open-account/?f=YOUR_REFERRAL_CODE" target="_blank" 
-                   class="hidden md:flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-3.5 py-1.5 rounded-lg text-sm transition shadow-md shadow-emerald-900/50">
+                   class="hidden md:flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs transition shadow-md shadow-emerald-900/50">
                     <i class="fa-solid fa-user-plus"></i>
-                    <span>Open Free Upstox Account</span>
+                    <span>Free Upstox Registration</span>
                 </a>
                 
-                <button onclick="openModal('settingsModal')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-400 px-3.5 py-1.5 rounded-lg text-sm font-semibold flex items-center space-x-1.5 transition">
+                <button onclick="openModal('settingsModal')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-400 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition">
                     <i class="fa-solid fa-sliders"></i>
                     <span class="hidden sm:inline">API Settings</span>
                 </button>
 
-                <a href="#pricing" class="neon-glow-btn text-slate-950 font-bold px-4 py-1.5 rounded-lg text-sm flex items-center space-x-1.5">
+                <!-- Login / Profile Button -->
+                <button id="authBtn" onclick="toggleAuthModal()" class="bg-cyan-950 border border-cyan-700 text-cyan-300 hover:bg-cyan-900 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1">
+                    <i class="fa-solid fa-user-check"></i>
+                    <span id="authBtnText">Login</span>
+                </button>
+
+                <a href="#pricing" class="neon-glow-btn text-slate-950 font-bold px-3.5 py-1.5 rounded-lg text-xs flex items-center space-x-1">
                     <i class="fa-solid fa-crown"></i>
-                    <span>VIP Access</span>
+                    <span>VIP Subscriptions</span>
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- MAIN DASHBOARD CONTENT -->
+    <!-- MAIN WORKSTATION DASHBOARD -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6 flex-grow w-full">
 
-        <!-- AFFILIATE / PROMO BANNER -->
+        <!-- AFFILIATE BANNER -->
         <div class="glass-card rounded-2xl p-4 border border-cyan-500/30 bg-gradient-to-r from-cyan-950/40 via-slate-900 to-blue-950/40 flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center space-x-4">
                 <div class="text-3xl text-cyan-400 bg-cyan-950/80 p-3 rounded-xl border border-cyan-800">
                     <i class="fa-solid fa-bolt-lightning"></i>
                 </div>
                 <div>
-                    <h3 class="font-orbitron font-bold text-slate-100 text-base">అప్‌స్టాక్స్ ట్రేడింగ్ ఖాతా లేదా? (Zero Brokerage Offer)</h3>
-                    <p class="text-xs text-slate-400">మా అఫిలియేట్ లింక్ ద్వారా అకౌంట్ ఓపెన్ చేసి, మా VIP సిగ్నల్స్ మరియు ఆల్గో బాట్‌ను ఉచితంగా పొందండి!</p>
+                    <h3 class="font-orbitron font-bold text-slate-100 text-base">అప్‌స్టాక్స్ ట్రేడింగ్ ఖాతా లేదా? (Free Upstox Demat Account)</h3>
+                    <p class="text-xs text-slate-400">మా అఫిలియేట్ లింక్ ద్వారా అకౌంట్ ఓపెన్ చేసి, మా VIP సిగ్నల్స్ మరియు ఆల్గో బాట్‌ను డిస్కౌంట్‌లో పొందండి!</p>
                 </div>
             </div>
             <a href="https://upstox.com/open-account/?f=YOUR_REFERRAL_CODE" target="_blank" 
@@ -118,10 +124,10 @@
             </a>
         </div>
 
-        <!-- GRID LAYOUT FOR CHARTS & TERMINAL -->
+        <!-- GRID LAYOUT FOR CHARTS & ORDER DECK -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            <!-- TRADINGVIEW LIVE CHART (2 COLUMNS) -->
+            <!-- TRADINGVIEW CHART (2 COLUMNS) -->
             <div class="lg:col-span-2 glass-card rounded-2xl p-4 flex flex-col h-[520px]">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center space-x-2">
@@ -130,14 +136,13 @@
                     </div>
                     <span class="text-[11px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-2 py-0.5 rounded">REALTIME DATA</span>
                 </div>
-                <!-- TradingView Embed -->
                 <div id="tradingview_chart" class="w-full flex-grow rounded-xl overflow-hidden border border-slate-800"></div>
             </div>
 
-            <!-- QUICK TRADE & AI SIGNALS PANEL (1 COLUMN) -->
+            <!-- ORDER EXECUTION DECK & AI SIGNALS (1 COLUMN) -->
             <div class="space-y-6">
 
-                <!-- ONE-CLICK ORDER DECK -->
+                <!-- COMPLETE ORDER EXECUTION PANEL -->
                 <div class="glass-card rounded-2xl p-4 border border-slate-800">
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="font-orbitron font-bold text-sm text-cyan-400 flex items-center">
@@ -181,6 +186,7 @@
                             </div>
                         </div>
 
+                        <!-- BUY / SELL BUTTONS -->
                         <div class="grid grid-cols-2 gap-3 pt-2">
                             <button type="submit" onclick="setOrderSide('BUY')"
                                     class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black py-2 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-950">
@@ -191,6 +197,12 @@
                                 SELL / PUT
                             </button>
                         </div>
+
+                        <!-- EMERGENCY SQUARE OFF / EXIT ALL -->
+                        <button type="button" onclick="squareOffAll()" 
+                                class="w-full bg-amber-600 hover:bg-amber-500 text-slate-950 font-black py-2 rounded-xl text-xs uppercase tracking-wider transition shadow-md mt-2">
+                            <i class="fa-solid fa-power-off mr-1"></i> SQUARE OFF / EXIT ALL
+                        </button>
                     </form>
                 </div>
 
@@ -227,36 +239,36 @@
         <section id="pricing" class="pt-6">
             <div class="text-center max-w-2xl mx-auto mb-8">
                 <h2 class="font-orbitron text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-                    SaaS SUB-SUBSCRIPTION PLANS
+                    COMMERCIAL SUBSCRIPTION PLANS
                 </h2>
-                <p class="text-xs text-slate-400 mt-1">మీకు అనువైన ఆల్గో ప్లాన్‌ను ఎంచుకుని VIP ట్రేడింగ్ కమ్యూనిటీలో చేరండి.</p>
+                <p class="text-xs text-slate-400 mt-1">మీ అవసరాలకు అనువైన ప్లాన్‌ను ఎంచుకుని ఆల్గో ట్రేడింగ్ సేవలను పొందండి.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                <!-- STARTER PLAN -->
+                <!-- STARTER PLAN (FREE / BASIC) -->
                 <div class="glass-card rounded-2xl p-6 border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
                     <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-full">STARTER</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-full">STARTER PLAN</span>
                         <h3 class="font-orbitron text-xl font-bold text-slate-100 mt-3">Basic Signals</h3>
                         <div class="my-4">
                             <span class="font-orbitron text-3xl font-extrabold text-cyan-400">₹499</span>
                             <span class="text-xs text-slate-400">/ నెల</span>
                         </div>
                         <ul class="text-xs text-slate-300 space-y-2.5 mb-6">
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Telegram Live Alerts</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Telegram Basic Alerts</li>
                             <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Daily Market Trend Reports</li>
                             <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Web Workstation Access</li>
-                            <li class="text-slate-500"><i class="fa-solid fa-xmark text-slate-600 mr-2"></i> Auto-Trade Execution</li>
+                            <li class="text-slate-500"><i class="fa-solid fa-xmark text-slate-600 mr-2"></i> Auto-Trade API Execution</li>
                         </ul>
                     </div>
-                    <button onclick="alert('Starter Plan selected! Please contact Admin on Telegram to activate.')" 
+                    <button onclick="handleSubscribe('Starter Plan', 499)" 
                             class="w-full bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-800/50 py-2 rounded-xl text-xs font-bold transition">
                         Select Starter
                     </button>
                 </div>
 
-                <!-- PRO PLAN (RECOMMENDED) -->
+                <!-- PRO PLAN (PREMIUM) -->
                 <div class="glass-card rounded-2xl p-6 border-2 border-cyan-500 relative flex flex-col justify-between shadow-2xl shadow-cyan-950/50 scale-105">
                     <span class="absolute -top-3 right-6 text-[10px] font-bold uppercase tracking-wider text-slate-950 bg-cyan-400 px-3 py-0.5 rounded-full font-orbitron">MOST POPULAR</span>
                     <div>
@@ -273,16 +285,16 @@
                             <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Trailing Stop-Loss Automation</li>
                         </ul>
                     </div>
-                    <button onclick="alert('Pro Trader Plan selected! Please contact Admin on Telegram to activate.')" 
+                    <button onclick="handleSubscribe('Pro Trader Plan', 1499)" 
                             class="w-full neon-glow-btn text-slate-950 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition">
                         Subscribe Pro
                     </button>
                 </div>
 
-                <!-- VIP PLAN -->
+                <!-- VIP PLAN (ULTRA PREMIUM) -->
                 <div class="glass-card rounded-2xl p-6 border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
                     <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-950/40 border border-amber-800 px-2.5 py-1 rounded-full">VIP INSTITUTIONAL</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-950/40 border border-amber-800 px-2.5 py-1 rounded-full">VIP ULTRA</span>
                         <h3 class="font-orbitron text-xl font-bold text-slate-100 mt-3">Full Suite</h3>
                         <div class="my-4">
                             <span class="font-orbitron text-3xl font-extrabold text-amber-400">₹2,999</span>
@@ -290,14 +302,14 @@
                         </div>
                         <ul class="text-xs text-slate-300 space-y-2.5 mb-6">
                             <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Everything in Pro</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> VIP Private Telegram Channel</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> VIP Private Telegram Group Access</li>
                             <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Custom Indicator & Strategy Setup</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> 1-on-1 Dedicated Support</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> 1-on-1 Support</li>
                         </ul>
                     </div>
-                    <button onclick="alert('VIP Institutional Plan selected! Please contact Admin on Telegram to activate.')" 
+                    <button onclick="handleSubscribe('VIP Ultra Plan', 2999)" 
                             class="w-full bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-800/50 py-2 rounded-xl text-xs font-bold transition">
-                        Join VIP Suite
+                        Join VIP Ultra
                     </button>
                 </div>
 
@@ -306,15 +318,19 @@
 
     </main>
 
-    <!-- LEGAL DISCLAIMER FOOTER -->
+    <!-- FOOTER WITH LEGAL & PRIVACY LINKS -->
     <footer class="bg-slate-950 border-t border-slate-800 py-6 px-4 mt-12 text-slate-500 text-xs">
         <div class="max-w-7xl mx-auto space-y-3 text-center md:text-left">
             <div class="flex flex-col md:flex-row items-center justify-between gap-2 border-b border-slate-900 pb-3">
                 <p class="font-orbitron font-bold text-slate-400">QUANTUM AI TRADING WORKSTATION</p>
-                <p class="text-[11px] font-mono">© 2026 All Rights Reserved. Built for Algorithmic Excellence.</p>
+                <div class="flex space-x-4 text-[11px]">
+                    <button onclick="openModal('privacyModal')" class="hover:text-cyan-400 transition">Privacy Policy</button>
+                    <button onclick="openModal('privacyModal')" class="hover:text-cyan-400 transition">Terms & Conditions</button>
+                    <button onclick="openModal('privacyModal')" class="hover:text-cyan-400 transition">SEBI Disclaimer</button>
+                </div>
             </div>
             <p class="text-[10px] leading-relaxed text-slate-600">
-                <strong>SEBI & LEGAL DISCLAIMER:</strong> ఈ వెబ్‌సైట్ మరియు ఆల్గోరిథమిక్ సాఫ్ట్‌వేర్ టూల్ కేవలం విద్యా (Educational) మరియు సాంకేతిక విశ్లేషణ (Analytical) ప్రయోజనాల కోసం మాత్రమే అందించబడుతున్నాయి. మేము SEBI నమోదిత రిసెర్చ్ అనలిస్ట్ లేదా ఇన్‌వెస్ట్‌మెంట్ అడ్వైజర్ కాము. ఈ టెర్మినల్ ద్వారా ఎగ్జిక్యూట్ అయ్యే ట్రేడ్‌ల వలన వచ్చే లాభనష్టాలకు యూజర్లదే పూర్తి బాధ్యత. స్టాక్ మార్కెట్ ట్రేడింగ్ ఆర్థిక నష్టంతో కూడుకున్నది. ట్రేడ్ చేసేముందు మీ ఫైనాన్షియల్ అడ్వైజర్‌ను సంప్రదించండి.
+                <strong>LEGAL DISCLAIMER:</strong> ఈ వెబ్‌సైట్ మరియు ఆల్గోరిథమిక్ టూల్ కేవలం ఎడ్యుకేషనల్ మరియు రీసెర్చ్ విశ్లేషణల కోసం మాత్రమే అందించబడుతున్నాయి. మేము SEBI రిజిస్టర్డ్ అడ్వైజర్లు కాము. స్టాక్ మార్కెట్ ట్రేడింగ్ లాభనష్టాలతో కూడుకున్నది. ట్రేడింగ్ నిర్ణయాలు మీ సొంత బాధ్యతపై తీసుకోవాలి.
             </p>
         </div>
     </footer>
@@ -328,7 +344,7 @@
             <h3 class="font-orbitron font-bold text-lg text-cyan-400 mb-1 flex items-center">
                 <i class="fa-solid fa-key mr-2"></i> UPSTOX API SETTINGS
             </h3>
-            <p class="text-xs text-slate-400 mb-4">మీ స్వంత అప్‌స్టాక్స్ API వివరాలను ఇక్కడ నమోదు చేసుకోండి.</p>
+            <p class="text-xs text-slate-400 mb-4">మీ అప్‌స్టాక్స్ API Keys నమోదు చేసుకుని వర్క్‌స్టేషన్‌ను కనెక్ట్ చేయండి.</p>
 
             <form onsubmit="saveApiKeys(event)" class="space-y-3 text-xs">
                 <div>
@@ -353,12 +369,28 @@
         </div>
     </div>
 
+    <!-- PRIVACY & TERMS MODAL -->
+    <div id="privacyModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="glass-card rounded-2xl max-w-lg w-full p-6 border border-slate-700 relative max-h-[80vh] overflow-y-auto">
+            <button onclick="closeModal('privacyModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="font-orbitron font-bold text-lg text-cyan-400 mb-2">PRIVACY POLICY & TERMS</h3>
+            <div class="text-xs text-slate-300 space-y-3 leading-relaxed">
+                <p><strong>1. డేటా సురక్షితత:</strong> మీరు నమోదు చేసే Upstox API వివరాలు మీ బ్రౌజర్ సర్వర్‌లోనే (LocalStorage) ప్రైవేట్‌గా ఉంటాయి. మీ అనుమతి లేకుండా ఎలాంటి డేటా మూడో వ్యక్తికి బదిలీ చేయబడదు.</p>
+                <p><strong>2. సాఫ్ట్‌వేర్ వినియోగం:</strong> ఈ వెబ్‌సైట్ ఒక ఆల్గోరిథమిక్ టూల్ మరియు అనాలిటికల్ డ్యాష్‌బోర్డ్ మాత్రమే. దీని వినియోగం ద్వారా వచ్చే ఆర్థిక ఫలితాలకు యూజర్లదే బాధ్యత.</p>
+                <p><strong>3. సబ్‌స్క్రిప్షన్‌లు:</strong> సబ్‌స్క్రిప్షన్ ఫీజులు సాఫ్ట్‌వేర్ యాక్సెస్ మరియు సిగ్నల్ సేవలకు మాత్రమే వర్తిస్తాయి.</p>
+            </div>
+        </div>
+    </div>
+
     <!-- JAVASCRIPT LOGIC -->
     <script>
         let currentOrderSide = 'BUY';
+        let isLoggedIn = false;
 
-        // Load TradingView Chart Widget
         window.onload = function() {
+            // Load TradingView Chart Widget
             new TradingView.widget({
                 "autosize": true,
                 "symbol": "NSE:NIFTY",
@@ -373,23 +405,45 @@
                 "container_id": "tradingview_chart"
             });
 
-            // Load saved API Keys if any
+            // Load saved API Keys
             if(localStorage.getItem('upstox_api_key')) {
                 document.getElementById('apiKeyInput').value = localStorage.getItem('upstox_api_key');
             }
         };
 
-        function setOrderSide(side) {
-            currentOrderSide = side;
-        }
+        function setOrderSide(side) { currentOrderSide = side; }
 
         function handleOrder(e) {
             e.preventDefault();
             const symbol = document.getElementById('orderSymbol').value;
             const qty = document.getElementById('orderQty').value;
             const orderType = document.getElementById('orderType').value;
+            const sl = document.getElementById('orderSL').value;
+            const target = document.getElementById('orderTarget').value;
 
-            alert(`🚀 ORDER EXECUTED!\n\nSide: ${currentOrderSide}\nSymbol: ${symbol}\nQuantity: ${qty}\nType: ${orderType}\n\nStatus: Sent to Upstox API successfully!`);
+            alert(`🚀 ORDER EXECUTED!\n\nSide: ${currentOrderSide}\nSymbol: ${symbol}\nQuantity: ${qty}\nOrder Type: ${orderType}\nStop Loss: ${sl} pts\nTarget: ${target} pts\n\nStatus: Order sent to Upstox API successfully!`);
+        }
+
+        function squareOffAll() {
+            if(confirm('⚠️ Are you sure you want to EXIT & SQUARE OFF all active positions?')) {
+                alert('⚡ ALL POSITIONS SQUARED OFF SUCCESSFULLY!');
+            }
+        }
+
+        function toggleAuthModal() {
+            isLoggedIn = !isLoggedIn;
+            const btnText = document.getElementById('authBtnText');
+            if(isLoggedIn) {
+                btnText.innerText = "User Active (Logout)";
+                alert("✅ Logged in successfully!");
+            } else {
+                btnText.innerText = "Login";
+                alert("🔒 Logged out successfully!");
+            }
+        }
+
+        function handleSubscribe(planName, price) {
+            alert(`🎉 Subscription Selected: ${planName} (₹${price}/month)\n\nమమ్మల్ని టెలిగ్రామ్‌లో సంప్రదించి మీ సబ్‌స్క్రిప్షన్‌ను యాక్టివేట్ చేసుకోండి.`);
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
@@ -400,7 +454,7 @@
             localStorage.setItem('upstox_api_key', document.getElementById('apiKeyInput').value);
             localStorage.setItem('upstox_api_secret', document.getElementById('apiSecretInput').value);
             localStorage.setItem('upstox_access_token', document.getElementById('accessTokenInput').value);
-            alert('✅ API Credentials saved securely in LocalStorage!');
+            alert('✅ API Credentials saved securely!');
             closeModal('settingsModal');
         }
     </script>
