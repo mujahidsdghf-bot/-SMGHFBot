@@ -1,71 +1,119 @@
-import streamlit as st
-import requests
-import pandas as pd
-import time
 import os
+import time
+import datetime
+import json
+import requests
+from flask import Flask, request, jsonify
 
-# వెబ్ టూల్ పేజ్ సెటప్
-st.set_page_config(page_title="SM AI Automated Trading Tool", layout="wide")
+app = Flask(__name__)
 
-st.title("🚀 SM AI Automated Stocks & Crypto Trading Tool")
-st.markdown("### ఆటోమేటిక్ టార్గెట్, స్టాప్ లాస్ మరియు అప్‌స్టాక్స్ ఎగ్జిట్ డ్యాష్‌బోర్డ్")
+# ==========================================
+# CONFIGURATION & SECRETS
+# ==========================================
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
+VIP_CHAT_ID = os.environ.get("VIP_CHAT_ID", "-1004446963554").strip()
+RAZORPAY_WEBHOOK_SECRET = os.environ.get("RAZORPAY_WEBHOOK_SECRET", "").strip()
 
-# సైడ్‌బార్‌లో అప్‌స్టాక్స్ టోకెన్ సెట్టింగ్స్
-st.sidebar.header("🔑 API సెట్టింగ్స్")
-upstox_token = st.sidebar.text_input("Upstox Access Token", type="password")
+DATA_FILE = "subscribers.json"
 
-# యూజర్ ట్రేడ్ ఇన్పుట్ సెక్షన్
-st.markdown("---")
-st.subheader("📊 కొత్త ఆటోమేటిక్ ట్రేడ్ సెట్ చేయండి")
+def load_subscribers():
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "r") as f:
+            return json.load(f)
+    return {}
 
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    symbol = st.text_input("స్టాక్ సింబల్ (ఉదా: RELIANCE.NS)", "RELIANCE.NS")
-with col2:
-    buy_price = st.number_input("బై / ఎంట్రీ ధర (₹)", value=2450.0)
-with col3:
-    stop_loss = st.number_input("స్టాప్ లాస్ (SL ₹)", value=2400.0)
-with col4:
-    target = st.number_input("టార్గెట్ (Target ₹)", value=2550.0)
+def save_subscribers(data):
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f, indent=4)
 
-quantity = st.number_input("క్వాంటిటీ (Quantity)", value=10, min_value=1)
-
-if st.button("🟢 ఆటోమేటిక్ ట్రేడ్ & మానిటరింగ్ ప్రారంభించు"):
-    st.success(f"Success! {symbol} కోసం ఆటోమేటిక్ స్టాప్ లాస్ మరియు టార్గెట్ ట్రాకింగ్ ఆక్టివేట్ చేయబడింది.")
-    
-    # ఆటోమేటిక్ మానిటరింగ్ సిమ్యులేషన్
-    placeholder = st.empty()
-    for i in range(5):
-        time.sleep(1)
-        placeholder.info(f"⏳ మార్కెట్ మానిటరింగ్ జరుగుతోంది... కరెంట్ స్టేటస్: Active (SL: {stop_loss} | Tgt: {target})")
-
-# అప్‌స్టాక్స్ ఆటోమేటిక్ ఎగ్జిట్ ఫంక్షన్
-def execute_upstox_exit(instrument_key, qty, token):
-    if not token:
-        print("Token missing")
-        return False
-    
-    url = "https://api.upstox.com/v2/order/place"
-    headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": f"Bearer {token}"
-    }
+# ==========================================
+# TELEGRAM BOT HELPER FUNCTIONS
+# ==========================================
+def create_vip_invite_link():
+    """ఒక్కసారి మాత్రమే వాడగలిగే 1-Time VIP Invite Link క్రియేట్ చేస్తుంది"""
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/createChatInviteLink"
     payload = {
-        "quantity": qty,
-        "product": "I",
-        "validity": "DAY",
-        "price": 0.0,
-        "tag": "Web_Auto_Exit",
-        "instrument_token": instrument_key,
-        "order_type": "MARKET",
-        "transaction_type": "SELL",
-        "is_amo": False
+        "chat_id": VIP_CHAT_ID,
+        "member_limit": 1,
+        "expire_date": int(time.time()) + 86400
     }
-    try:
-        response = requests.post(url, json=payload, headers=headers)
-        if response.status_code == 200:
-            return True
-    except Exception as e:
-        print(f"Exit Error: {e}")
-    return False
+    response = requests.post(url, json=payload).json()
+    if response.get("ok"):
+        return response["result"]["invite_link"]
+    return None
+
+def kick_user_from_vip(user_id):
+    """30 రోజులు పూర్తయ్యాక యూజర్‌ని VIP నుండి తొలగించే ఫంక్షన్"""
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/banChatMember"
+    payload = {
+        "chat_id": VIP_CHAT_ID,
+        "user_id": user_id,
+        "revoke_messages": False
+    }
+    res = requests.post(url, json=payload).json()
+    
+    unban_url = f"https://api.telegram.org/bot{BOT_TOKEN}/unbanChatMember"
+    requests.post(unban_url, json={"chat_id": VIP_CHAT_ID, "user_id": user_id, "only_if_banned": True})
+    return res.get("ok")
+
+# ==========================================
+# WEBHOOK FOR RAZORPAY PAYMENT SUCCESS
+# ==========================================
+@app.route("/razorpay-webhook", methods=["POST"])
+def razorpay_webhook():
+    data = request.json
+    
+    if data.get("event") == "payment.captured":
+        payment_info = data["payload"]["payment"]["entity"]
+        customer_email = payment_info.get("email")
+        customer_phone = payment_info.get("contact")
+        amount_paid = payment_info.get("amount") / 100
+
+        vip_invite_link = create_vip_invite_link()
+
+        if vip_invite_link:
+            subscribers = load_subscribers()
+            expiry_date = (datetime.datetime.now() + datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+            
+            subscribers[customer_phone] = {
+                "email": customer_email,
+                "amount": amount_paid,
+                "join_date": datetime.datetime.now().strftime("%Y-%m-%d"),
+                "expiry_date": expiry_date,
+                "invite_link": vip_invite_link,
+                "status": "ACTIVE"
+            }
+            save_subscribers(subscribers)
+
+            print(f"✅ Payment Success for {customer_phone}. VIP Link: {vip_invite_link}")
+            
+            return jsonify({
+                "status": "SUCCESS",
+                "message": "VIP Invite Link Generated Successfully",
+                "vip_link": vip_invite_link
+            }), 200
+
+    return jsonify({"status": "IGNORED"}), 200
+
+# ==========================================
+# CRON JOB / DAILY EXPIRY CHECKER
+# ==========================================
+def check_and_remove_expired_members():
+    subscribers = load_subscribers()
+    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    
+    for phone, user in list(subscribers.items()):
+        if user.get("status") == "ACTIVE" and user.get("expiry_date") <= today:
+            user_telegram_id = user.get("telegram_user_id")
+            if user_telegram_id:
+                kicked = kick_user_from_vip(user_telegram_id)
+                if kicked:
+                    user["status"] = "EXPIRED"
+                    print(f"🔴 User {phone} (ID: {user_telegram_id}) VIP validity expired and removed.")
+            else:
+                user["status"] = "EXPIRED"
+                
+    save_subscribers(subscribers)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
