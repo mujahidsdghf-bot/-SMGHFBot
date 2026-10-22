@@ -212,13 +212,11 @@ def analyze_market_advanced(symbol, name):
         c_buy = (ema9.iloc[-1] > ema21.iloc[-1]) and (rsi.iloc[-1] > 48)
         sig_intra = "STRONG BUY 🟢" if (c_buy and (last_price > ema9.iloc[-1])) else "HOLD 🟡"
 
-        # --- ఇంట్రాడే లెవెల్స్ (Intraday - 1D ATR Base) ---
         t1_i = last_price + (1.0 * atr)
         t2_i = last_price + (2.0 * atr)
         t3_i = last_price + (3.5 * atr)
         sl_i = max(0.000001, last_price - (1.2 * atr))
 
-        # --- నార్మల్ / స్వింగ్ లెవెల్స్ (Swing / Positional) ---
         t1_n = last_price + (2.5 * atr)
         t2_n = last_price + (5.0 * atr)
         t3_n = last_price + (8.0 * atr)
@@ -245,7 +243,6 @@ def analyze_market_advanced(symbol, name):
 # MAIN EXECUTION SCRIPT
 # ==========================================
 if __name__ == "__main__":
-    # ఫ్రీ ఛానెల్ అలర్ట్ & సబ్స్క్రిప్షన్ ప్రమోషన్
     send_telegram(
         "🚀 *QUANTUM AI FREE UPDATE*\n\n"
         "200+ స్టాక్స్ మరియు ఇంట్రాడే ఆప్షన్స్ లైవ్ స్క్రీనింగ్ రన్ అవుతోంది!\n"
@@ -256,38 +253,28 @@ if __name__ == "__main__":
 
     send_telegram("🚨 *QUANTUM AI VIP: Multi-Trading Screener Started (Intraday + Normal + Options)...*", chat_id=VIP_CHAT_ID)
 
-    # 1. Upstox Option Market Data Check
     check_option_chain_data()
-
-    # 2. Advanced Intraday Options (CE/PE) Signals Generator
     generate_advanced_intraday_options_signals()
 
-    # 3. Master 200+ Stocks Screener Loop (Intraday + Swing Signals)
     for cat_name, items in MASTER_200_LIST.items():
         lines = [f"{cat_name}\n======================="]
         for symbol, name in items.items():
             block = analyze_market_advanced(symbol, name)
             if block:
                 lines.append(block)
-                
                 if len("\n".join(lines)) > 3500:
-                    message_chunk = "\n".join(lines)
-                    send_telegram(message_chunk, chat_id=VIP_CHAT_ID)
+                    send_telegram("\n".join(lines), chat_id=VIP_CHAT_ID)
                     lines = [f"{cat_name} (Continuation)\n======================="]
 
         if len(lines) > 1:
-            message_chunk = "\n".join(lines)
-            send_telegram(message_chunk, chat_id=VIP_CHAT_ID)
+            send_telegram("\n".join(lines), chat_id=VIP_CHAT_ID)
         time.sleep(0.5)
 
-    # Completion & Subscription Reminder Messages
     send_telegram("✅ **అన్ని 200+ స్టాక్స్ మరియు ఆప్షన్స్ స్క్రీనింగ్ విజయవంతంగా పూర్తయింది!**", chat_id=FREE_CHAT_ID)
-    
     send_telegram(
         "✅ *VIP MULTI-MARKET SCREENING COMPLETED!*\n\n"
         "💡 _సూచన: టార్గెట్ 1 వద్ద కనీసం 40% క్వాంటిటీ బుక్ చేసి, స్టాప్ లాస్‌ను కాస్ట్-టూ-కాస్ట్ (Cost-to-Cost) కి మార్చండి._\n\n"
         "🌐 సబ్స్క్రిప్షన్ రెన్యువల్ లేదా సహాయం కోసం: https://mujahidsdghf-bot.github.io/-SMGHFBot/",
         chat_id=VIP_CHAT_ID
     )
-    
     print("Advanced Master Stocks & Options Signals Processed Successfully!")
