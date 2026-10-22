@@ -5,26 +5,32 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 
-# Secrets
+# ==========================================
+# SECRETS & CHAT IDs CONFIGURATION
+# ==========================================
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
-CHAT_ID = os.environ.get("CHAT_ID", "").strip()
 UPSTOX_TOKEN = os.environ.get("UPSTOX_ACCESS_TOKEN", "").strip()
 
-def send_telegram(text):
-    if not BOT_TOKEN or not CHAT_ID:
-        print("Telegram Credentials Missing!")
+# రెండు వేర్వేరు టెలిగ్రామ్ చాట్ ఐడీలు (GitHub Secrets నుండి రీడ్ అవుతాయి)
+FREE_CHAT_ID = os.environ.get("FREE_CHAT_ID", "-1004438599671").strip()  # Quantum AI Trading Community[span_0](start_span)[span_0](end_span)
+VIP_CHAT_ID = os.environ.get("VIP_CHAT_ID", "-1004446963554").strip()    # Quantum AI VIP Ultra Club[span_1](start_span)[span_1](end_span)
+
+def send_telegram(text, chat_id=FREE_CHAT_ID):
+    """নির্দিষ্ট టెలిగ్రామ్ చాట్ ఐడీకి మెసేజ్ పంపే జనరల్ ఫంక్షన్"""
+    if not BOT_TOKEN or not chat_id:
+        print("Telegram Credentials or Chat ID Missing!")
         return
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     try:
-        response = requests.post(url, json={"chat_id": CHAT_ID, "text": text}, timeout=10)
+        response = requests.post(url, json={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"}, timeout=10)
         if response.status_code != 200:
             print(f"Telegram Send Error: {response.text}")
     except Exception as e:
         print(f"Telegram Error: {e}")
 
-# --- అప్‌స్టాక్స్ ద్వారా ఆప్షన్ చైన్ (CE/PE) డేటాను చెక్ చేసే ఫంక్షన్ ---
+# --- అప్‌స్టాక్స్ ద్వారా ఆప్షన్ చైన్ (CE/PE) డేటాను చెక్ చేసి ఫ్రీ ఛానెల్‌కి పంపే ఫంక్షన్ ---
 def check_option_chain_data():
-    """అప్‌స్టాక్స్ API ద్వారా నిఫ్టీ/ఆప్షన్స్ డేటాను పరిశీలించడం"""
+    """అప్‌స్టాక్స్ API ద్వారా నిఫ్టీ/ఆప్షన్స్ డేటాను పరిశీలించి ఫ్రీ ఛానెల్‌కి పంపుతుంది"""
     if not UPSTOX_TOKEN:
         print("Upstox Token Missing!")
         return
@@ -40,13 +46,13 @@ def check_option_chain_data():
         data = response.json()
 
         if response.status_code == 200 and data.get("status") == "success":
-            # ఇక్కడ మీరు CE / PE కి సంబంధించిన లాజిక్ లేదా మెసేజ్ సెట్ చేసుకోవచ్చు
             msg = (
                 "📊 *Upstox Option Market Update*\n"
                 "Nifty 50 Data Fetched Successfully via Upstox API!\n"
                 "🟢 *CE / PE Tracking Active*"
             )
-            send_telegram(msg)
+            # ఇది ఫ్రీ ఛానెల్‌కి వెళుతుంది
+            send_telegram(msg, chat_id=FREE_CHAT_ID)
         else:
             print("Upstox Error fetching data:", data)
     except Exception as e:
@@ -153,9 +159,11 @@ def analyze_market(symbol, name):
         return None
 
 # --- స్క్రిప్ట్ రన్ ప్రారంభం ---
-send_telegram("🚀 **SMGHFBOT: పూర్తి 200+ స్టాక్స్ & ఆప్షన్స్ స్క్రీనింగ్ ప్రారంభమైంది...**")
+# ఫ్రీ ఛానెల్‌కి మరియు VIP ఛానెల్‌కి స్టార్టింగ్ అలర్ట్ పంపుతుంది
+send_telegram("🚀 **QUANTUM AI: పూర్తి 200+ స్టాక్స్ & ఆప్షన్స్ స్క్రీనింగ్ ప్రారంభమైంది...**", chat_id=FREE_CHAT_ID)
+send_telegram("🚨 **QUANTUM AI VIP: లైవ్ సిగ్నల్స్ స్క్రీనింగ్ ప్రారంభమైంది...**", chat_id=VIP_CHAT_ID)
 
-# ముందుగా అప్‌స్టాక్స్ ఆప్షన్ డేటాను చెక్ చేసి పంపుతుంది
+# అప్‌స్టాక్స్ ఆప్షన్ డేటాను చెక్ చేసి పంపుతుంది
 check_option_chain_data()
 
 for cat_name, items in MASTER_200_LIST.items():
@@ -166,12 +174,17 @@ for cat_name, items in MASTER_200_LIST.items():
             lines.append(block)
             
             if len("\n".join(lines)) > 3500:
-                send_telegram("\n".join(lines))
+                message_chunk = "\n".join(lines)
+                # రెండింటికీ బ్రాడ్‌కాస్ట్ అవుతుంది (లేదా కావాలంటే VIP కి మాత్రమే సిగ్నల్స్ పంపుకోవచ్చు)
+                send_telegram(message_chunk, chat_id=VIP_CHAT_ID)
                 lines = [f"{cat_name} (Continuation)\n======================="]
 
     if len(lines) > 1:
-        send_telegram("\n".join(lines))
+        message_chunk = "\n".join(lines)
+        send_telegram(message_chunk, chat_id=VIP_CHAT_ID)
     time.sleep(0.5)
 
-send_telegram("✅ **అన్ని 200+ స్టాక్స్ మరియు ఆప్షన్స్ స్క్రీనింగ్ విజయవంతంగా పూర్తయింది!**")
-print("All Stocks and Options Processed Successfully")
+# ముగింపు మెసేజ్
+send_telegram("✅ **అన్ని 200+ స్టాక్స్ మరియు ఆప్షన్స్ స్క్రీనింగ్ విజయవంతంగా పూర్తయింది!**", chat_id=FREE_CHAT_ID)
+send_telegram("✅ **VIP సిగ్నల్స్ అప్‌డేట్ విజయవంతంగా పూర్తయింది!**", chat_id=VIP_CHAT_ID)
+print("All Stocks and Options Processed Successfully and Sent to Telegram Channels")
