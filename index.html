@@ -78,7 +78,6 @@
 
             <!-- ACTION BUTTONS & USER PROFILE -->
             <div class="flex items-center space-x-3">
-                <!-- Upstox Affiliate Link Button -->
                 <a href="https://upstox.com/open-account/?f=YOUR_REFERRAL_CODE" target="_blank" 
                    class="hidden md:flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs transition shadow-md shadow-emerald-900/50">
                     <i class="fa-solid fa-user-plus"></i>
@@ -90,7 +89,6 @@
                     <span class="hidden sm:inline">API Settings</span>
                 </button>
 
-                <!-- Login / Profile Button -->
                 <button id="authBtn" onclick="toggleAuthModal()" class="bg-cyan-950 border border-cyan-700 text-cyan-300 hover:bg-cyan-900 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1">
                     <i class="fa-solid fa-user-check"></i>
                     <span id="authBtnText">Login</span>
@@ -235,7 +233,7 @@
             </div>
         </div>
 
-        <!-- PRICING & SAAS SUBSCRIPTIONS SECTION -->
+        <!-- PRICING & SAAS SUBSCRIPTIONS SECTION (RAZORPAY INTEGRATED) -->
         <section id="pricing" class="pt-6">
             <div class="text-center max-w-2xl mx-auto mb-8">
                 <h2 class="font-orbitron text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
@@ -246,7 +244,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                <!-- STARTER PLAN (FREE / BASIC) -->
+                <!-- STARTER PLAN -->
                 <div class="glass-card rounded-2xl p-6 border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
                     <div>
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-full">STARTER PLAN</span>
@@ -262,13 +260,14 @@
                             <li class="text-slate-500"><i class="fa-solid fa-xmark text-slate-600 mr-2"></i> Auto-Trade API Execution</li>
                         </ul>
                     </div>
-                    <button onclick="handleSubscribe('Starter Plan', 499)" 
-                            class="w-full bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-800/50 py-2 rounded-xl text-xs font-bold transition">
+                    <!-- Razorpay Payment Link Button -->
+                    <a href="https://rzp.io/l/YOUR_RAZORPAY_PAYMENT_LINK" target="_blank"
+                       class="w-full text-center bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-800/50 py-2.5 rounded-xl text-xs font-bold transition block">
                         Select Starter
-                    </button>
+                    </a>
                 </div>
 
-                <!-- PRO PLAN (PREMIUM) -->
+                <!-- PRO PLAN (MOST POPULAR) -->
                 <div class="glass-card rounded-2xl p-6 border-2 border-cyan-500 relative flex flex-col justify-between shadow-2xl shadow-cyan-950/50 scale-105">
                     <span class="absolute -top-3 right-6 text-[10px] font-bold uppercase tracking-wider text-slate-950 bg-cyan-400 px-3 py-0.5 rounded-full font-orbitron">MOST POPULAR</span>
                     <div>
@@ -285,13 +284,14 @@
                             <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Trailing Stop-Loss Automation</li>
                         </ul>
                     </div>
-                    <button onclick="handleSubscribe('Pro Trader Plan', 1499)" 
-                            class="w-full neon-glow-btn text-slate-950 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition">
-                        Subscribe Pro
-                    </button>
+                    <!-- Razorpay Payment Link Button -->
+                    <a href="https://rzp.io/l/YOUR_RAZORPAY_PAYMENT_LINK" target="_blank"
+                       class="w-full text-center neon-glow-btn text-slate-950 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition block">
+                        Subscribe Pro (₹1,499)
+                    </a>
                 </div>
 
-                <!-- VIP PLAN (ULTRA PREMIUM) -->
+                <!-- VIP PLAN -->
                 <div class="glass-card rounded-2xl p-6 border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
                     <div>
                         <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-950/40 border border-amber-800 px-2.5 py-1 rounded-full">VIP ULTRA</span>
@@ -307,10 +307,11 @@
                             <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> 1-on-1 Support</li>
                         </ul>
                     </div>
-                    <button onclick="handleSubscribe('VIP Ultra Plan', 2999)" 
-                            class="w-full bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-800/50 py-2 rounded-xl text-xs font-bold transition">
+                    <!-- Razorpay Payment Link Button -->
+                    <a href="https://rzp.io/l/YOUR_RAZORPAY_PAYMENT_LINK" target="_blank"
+                       class="w-full text-center bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-800/50 py-2.5 rounded-xl text-xs font-bold transition block">
                         Join VIP Ultra
-                    </button>
+                    </a>
                 </div>
 
             </div>
@@ -440,10 +441,6 @@
                 btnText.innerText = "Login";
                 alert("🔒 Logged out successfully!");
             }
-        }
-
-        function handleSubscribe(planName, price) {
-            alert(`🎉 Subscription Selected: ${planName} (₹${price}/month)\n\nమమ్మల్ని టెలిగ్రామ్‌లో సంప్రదించి మీ సబ్‌స్క్రిప్షన్‌ను యాక్టివేట్ చేసుకోండి.`);
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
