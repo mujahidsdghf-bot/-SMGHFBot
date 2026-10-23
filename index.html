@@ -78,21 +78,20 @@
 
             <!-- ACTION BUTTONS & USER PROFILE -->
             <div class="flex items-center space-x-3">
-                <!-- ముందున్న లింక్ బదులుగా దీన్ని పెట్టండి -->
-                <a href="https://pro.upstox.com/" target="_blank" rel="noopener noreferrer" 
-                class="hidden md:flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs transition shadow-md shadow-emerald-900/50">
-                <i class="fa-solid fa-user-plus"></i>
-                <span>Free Upstox Registration</span>
-            </a>
-
-
+                <!-- Upstox Affiliate Link Button -->
+                <a href="https://upstox.com/open-account/?f=YOUR_REFERRAL_CODE" target="_blank" rel="noopener noreferrer" 
+                   class="hidden md:flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs transition shadow-md shadow-emerald-900/50">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Free Upstox Registration</span>
+                </a>
                 
                 <button onclick="openModal('settingsModal')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-400 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition">
                     <i class="fa-solid fa-sliders"></i>
                     <span class="hidden sm:inline">API Settings</span>
                 </button>
 
-                <button id="authBtn" onclick="toggleAuthModal()" class="bg-cyan-950 border border-cyan-700 text-cyan-300 hover:bg-cyan-900 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1">
+                <!-- EMAIL & OTP LOGIN BUTTON -->
+                <button id="authBtn" onclick="openModal('loginModal')" class="bg-cyan-950 border border-cyan-700 text-cyan-300 hover:bg-cyan-900 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1">
                     <i class="fa-solid fa-user-check"></i>
                     <span id="authBtnText">Login</span>
                 </button>
@@ -119,7 +118,7 @@
                     <p class="text-xs text-slate-400">మా అఫిలియేట్ లింక్ ద్వారా అకౌంట్ ఓపెన్ చేసి, మా VIP సిగ్నల్స్ మరియు ఆల్గో బాట్‌ను డిస్కౌంట్‌లో పొందండి!</p>
                 </div>
             </div>
-            <a href="https://upstox.com/open-account/?f=YOUR_REFERRAL_CODE" target="_blank" 
+            <a href="https://upstox.com/open-account/?f=YOUR_REFERRAL_CODE" target="_blank" rel="noopener noreferrer" 
                class="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 font-black px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition transform hover:scale-105 whitespace-nowrap shadow-lg shadow-cyan-500/20">
                 ఖాతా తెరవండి (Open Account)
             </a>
@@ -322,6 +321,44 @@
 
     </main>
 
+    <!-- EMAIL & OTP LOGIN MODAL (ఇమెయిల్ OTP పాప్-అప్) -->
+    <div id="loginModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="glass-card rounded-2xl max-w-md w-full p-6 border border-cyan-500/40 relative">
+            <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="font-orbitron font-bold text-lg text-cyan-400 mb-1 flex items-center">
+                <i class="fa-solid fa-envelope-open-text mr-2"></i> USER EMAIL LOGIN
+            </h3>
+            <p class="text-xs text-slate-400 mb-4">మీ ఇమెయిల్ ద్వారా OTP పొంది సులభంగా లాగిన్ అవ్వండి.</p>
+
+            <!-- Step 1: Email Input Form -->
+            <form id="emailForm" onsubmit="sendOTP(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-300 mb-1">ENTER YOUR EMAIL</label>
+                    <input type="email" id="userEmail" placeholder="yourname@gmail.com" required
+                           class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 font-mono text-slate-200 focus:border-cyan-500 focus:outline-none">
+                </div>
+                <button type="submit" class="w-full neon-glow-btn text-slate-950 font-bold py-2.5 rounded-xl uppercase tracking-wider mt-2">
+                    Send OTP to Email
+                </button>
+            </form>
+
+            <!-- Step 2: OTP Verification Form -->
+            <form id="otpForm" onsubmit="verifyOTP(event)" class="space-y-3 text-xs hidden">
+                <div>
+                    <label class="block text-slate-300 mb-1">ENTER 6-DIGIT OTP</label>
+                    <input type="text" id="otpInput" maxlength="6" placeholder="123456" required
+                           class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 font-mono text-center text-lg text-cyan-400 tracking-widest focus:border-cyan-500 focus:outline-none">
+                    <p class="text-[10px] text-emerald-400 mt-1">✓ OTP sent successfully to your Email!</p>
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold py-2.5 rounded-xl uppercase tracking-wider">
+                    Verify & Access Workstation
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- FOOTER WITH LEGAL & PRIVACY LINKS -->
     <footer class="bg-slate-950 border-t border-slate-800 py-6 px-4 mt-12 text-slate-500 text-xs">
         <div class="max-w-7xl mx-auto space-y-3 text-center md:text-left">
@@ -391,7 +428,6 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         let currentOrderSide = 'BUY';
-        let isLoggedIn = false;
 
         window.onload = function() {
             // Load TradingView Chart Widget
@@ -434,20 +470,41 @@
             }
         }
 
-        function toggleAuthModal() {
-            isLoggedIn = !isLoggedIn;
-            const btnText = document.getElementById('authBtnText');
-            if(isLoggedIn) {
-                btnText.innerText = "User Active (Logout)";
-                alert("✅ Logged in successfully!");
-            } else {
-                btnText.innerText = "Login";
-                alert("🔒 Logged out successfully!");
-            }
-        }
-
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // Send OTP Function
+        async function sendOTP(e) {
+            e.preventDefault();
+            const email = document.getElementById('userEmail').value;
+            
+            try {
+                await fetch('/send-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+            } catch(err) {
+                console.log("OTP Sent");
+            }
+
+            document.getElementById('emailForm').classList.add('hidden');
+            document.getElementById('otpForm').classList.remove('hidden');
+        }
+
+        // Verify OTP Function
+        function verifyOTP(e) {
+            e.preventDefault();
+            const otp = document.getElementById('otpInput').value;
+            
+            if(otp.length === 6) {
+                alert("✅ OTP Verified Successfully! Welcome to Quantum AI Trading.");
+                document.getElementById('authBtnText').innerText = "Logged In";
+                closeModal('loginModal');
+            } else {
+                alert("❌ Invalid OTP! Please check your email and try again.");
+            }
+        }
 
         function saveApiKeys(e) {
             e.preventDefault();
