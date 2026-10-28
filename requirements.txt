@@ -3,3 +3,8 @@ yfinance
 pandas
 numpy
 upstox-python-sdk
+flask
+flask-cors
+requests
+gunicorn
+
