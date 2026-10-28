@@ -78,7 +78,7 @@
 
             <!-- ACTION BUTTONS & USER PROFILE -->
             <div class="flex items-center space-x-3">
-                <!-- Upstox Account Opening Link (Fixed for Mobile View) -->
+                <!-- Upstox Account Opening Link -->
                 <a href="https://upstox.com/open-demat-account/?f=YOUR_REFERRAL_CODE" target="_blank" rel="noopener noreferrer" 
                    class="hidden md:flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs transition shadow-md shadow-emerald-900/50">
                     <i class="fa-solid fa-user-plus"></i>
@@ -118,7 +118,7 @@
                     <p class="text-xs text-slate-400">మా అఫిలియేట్ లింక్ ద్వారా అకౌంట్ ఓపెన్ చేసి, మా VIP సిగ్నల్స్ మరియు ఆల్గో బాట్‌ను డిస్కౌంట్‌లో పొందండి!</p>
                 </div>
             </div>
-            <a href="https://upstox.com/open-demat-account/?f=YOUR_REFERRAL_CODE" target="_blank" rel="noopener noreferrer"
+            <a href="https://upstox.com/open-demat-account/?f=YOUR_REFERRAL_CODE" target="_blank" rel="noopener noreferrer" 
                class="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 font-black px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition transform hover:scale-105 whitespace-nowrap shadow-lg shadow-cyan-500/20">
                 ఖాతా తెరవండి (Open Account)
             </a>
@@ -262,7 +262,6 @@
                             <li class="text-slate-500"><i class="fa-solid fa-xmark text-slate-600 mr-2"></i> Auto-Trade API Execution</li>
                         </ul>
                     </div>
-                    <!-- Razorpay Payment Link Button -->
                     <a href="https://rzp.io/l/YOUR_RAZORPAY_PAYMENT_LINK" target="_blank"
                        class="w-full text-center bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-800/50 py-2.5 rounded-xl text-xs font-bold transition block">
                         Select Starter
@@ -286,7 +285,6 @@
                             <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Trailing Stop-Loss Automation</li>
                         </ul>
                     </div>
-                    <!-- Razorpay Payment Link Button -->
                     <a href="https://rzp.io/l/YOUR_RAZORPAY_PAYMENT_LINK" target="_blank"
                        class="w-full text-center neon-glow-btn text-slate-950 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition block">
                         Subscribe Pro (₹1,499)
@@ -309,7 +307,6 @@
                             <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> 1-on-1 Support</li>
                         </ul>
                     </div>
-                    <!-- Razorpay Payment Link Button -->
                     <a href="https://rzp.io/l/YOUR_RAZORPAY_PAYMENT_LINK" target="_blank"
                        class="w-full text-center bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-800/50 py-2.5 rounded-xl text-xs font-bold transition block">
                         Join VIP Ultra
@@ -321,7 +318,7 @@
 
     </main>
 
-    <!-- EMAIL & OTP LOGIN MODAL (ఇమెయిల్ OTP పాప్-అప్) -->
+    <!-- EMAIL & OTP LOGIN MODAL -->
     <div id="loginModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="glass-card rounded-2xl max-w-md w-full p-6 border border-cyan-500/40 relative">
             <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
@@ -473,7 +470,7 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // Send OTP Function connected to Flask backend (app.py)
+        // Send OTP Function connected to Render Backend
         async function sendOTP(e) {
             e.preventDefault();
             const email = document.getElementById('userEmail').value;
@@ -481,7 +478,7 @@
             btn.innerText = "Sending OTP...";
 
             try {
-                const response = await fetch('/send-otp', {
+                const response = await fetch('https://smghfbot.onrender.com/send-otp', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email })
@@ -496,20 +493,20 @@
                     alert("Error: " + resData.message);
                 }
             } catch(err) {
-                alert("Server Error! Make sure app.py is running.");
+                alert("Server Error! Check connection.");
             } finally {
                 btn.innerText = "Send OTP to Email";
             }
         }
 
-        // Verify OTP Function connected to Flask backend (app.py)
+        // Verify OTP Function connected to Render Backend
         async function verifyOTP(e) {
             e.preventDefault();
             const email = document.getElementById('userEmail').value;
             const otp = document.getElementById('otpInput').value;
 
             try {
-                const response = await fetch('/verify-otp', {
+                const response = await fetch('https://smghfbot.onrender.com/verify-otp', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email, otp: otp })
