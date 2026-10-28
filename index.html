@@ -78,8 +78,8 @@
 
             <!-- ACTION BUTTONS & USER PROFILE -->
             <div class="flex items-center space-x-3">
-                <!-- Upstox Affiliate Link Button -->
-                <a href="https://upstox.com/open-account/?f=YOUR_REFERRAL_CODE" target="_blank" rel="noopener noreferrer" 
+                <!-- Upstox Account Opening Link (Fixed for Mobile View) -->
+                <a href="https://upstox.com/open-demat-account/?f=YOUR_REFERRAL_CODE" target="_blank" rel="noopener noreferrer" 
                    class="hidden md:flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs transition shadow-md shadow-emerald-900/50">
                     <i class="fa-solid fa-user-plus"></i>
                     <span>Free Upstox Registration</span>
@@ -118,7 +118,7 @@
                     <p class="text-xs text-slate-400">మా అఫిలియేట్ లింక్ ద్వారా అకౌంట్ ఓపెన్ చేసి, మా VIP సిగ్నల్స్ మరియు ఆల్గో బాట్‌ను డిస్కౌంట్‌లో పొందండి!</p>
                 </div>
             </div>
-            <a href="https://upstox.com/open-account/?f=YOUR_REFERRAL_CODE" target="_blank" rel="noopener noreferrer" 
+            <a href="https://upstox.com/open-demat-account/?f=YOUR_REFERRAL_CODE" target="_blank" rel="noopener noreferrer"
                class="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 font-black px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition transform hover:scale-105 whitespace-nowrap shadow-lg shadow-cyan-500/20">
                 ఖాతా తెరవండి (Open Account)
             </a>
@@ -339,7 +339,7 @@
                     <input type="email" id="userEmail" placeholder="yourname@gmail.com" required
                            class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 font-mono text-slate-200 focus:border-cyan-500 focus:outline-none">
                 </div>
-                <button type="submit" class="w-full neon-glow-btn text-slate-950 font-bold py-2.5 rounded-xl uppercase tracking-wider mt-2">
+                <button type="submit" id="sendOtpBtn" class="w-full neon-glow-btn text-slate-950 font-bold py-2.5 rounded-xl uppercase tracking-wider mt-2">
                     Send OTP to Email
                 </button>
             </form>
@@ -473,36 +473,58 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // Send OTP Function
+        // Send OTP Function connected to Flask backend (app.py)
         async function sendOTP(e) {
             e.preventDefault();
             const email = document.getElementById('userEmail').value;
-            
+            const btn = document.getElementById('sendOtpBtn');
+            btn.innerText = "Sending OTP...";
+
             try {
-                await fetch('/send-otp', {
+                const response = await fetch('/send-otp', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email })
                 });
+                const resData = await response.json();
+                
+                if(resData.success) {
+                    document.getElementById('emailForm').classList.add('hidden');
+                    document.getElementById('otpForm').classList.remove('hidden');
+                    if(resData.debug_otp) alert(`[Demo OTP]: ${resData.debug_otp}`);
+                } else {
+                    alert("Error: " + resData.message);
+                }
             } catch(err) {
-                console.log("OTP Sent");
+                alert("Server Error! Make sure app.py is running.");
+            } finally {
+                btn.innerText = "Send OTP to Email";
             }
-
-            document.getElementById('emailForm').classList.add('hidden');
-            document.getElementById('otpForm').classList.remove('hidden');
         }
 
-        // Verify OTP Function
-        function verifyOTP(e) {
+        // Verify OTP Function connected to Flask backend (app.py)
+        async function verifyOTP(e) {
             e.preventDefault();
+            const email = document.getElementById('userEmail').value;
             const otp = document.getElementById('otpInput').value;
-            
-            if(otp.length === 6) {
-                alert("✅ OTP Verified Successfully! Welcome to Quantum AI Trading.");
-                document.getElementById('authBtnText').innerText = "Logged In";
-                closeModal('loginModal');
-            } else {
-                alert("❌ Invalid OTP! Please check your email and try again.");
+
+            try {
+                const response = await fetch('/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, otp: otp })
+                });
+                const resData = await response.json();
+
+                if(resData.success) {
+                    alert("✅ OTP Verified Successfully! Welcome to Quantum AI Trading.");
+                    document.getElementById('authBtnText').innerText = "Logged In";
+                    closeModal('loginModal');
+                } else {
+                    alert("❌ Invalid OTP! Please check your email and try again.");
+                }
+            } catch(err) {
+                alert("Verification Error!");
             }
         }
 
