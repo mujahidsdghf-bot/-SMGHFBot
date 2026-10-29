@@ -12,6 +12,10 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+@app.route('/')
+def home():
+    return "Quantum AI Trading Backend is Live and Working!"
+
 # ==========================================
 # CONFIGURATION & SECRETS
 # ==========================================
