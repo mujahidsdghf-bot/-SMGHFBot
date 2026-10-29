@@ -469,36 +469,55 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-                // Send OTP Function connected to Render Backend
+                        // Send OTP Function with Auto-Retry & Extended Timeout for Render Cold Start
         async function sendOTP(e) {
             e.preventDefault();
             const email = document.getElementById('userEmail').value;
             const btn = document.getElementById('sendOtpBtn');
-            btn.innerText = "Sending OTP...";
+            btn.innerText = "Waking Server & Sending OTP...";
 
-            try {
-                const response = await fetch('https://smghfbot.onrender.com/send-otp', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email })
-                });
-                const resData = await response.json();
-                
-                if (resData.success) {
-                    document.getElementById('emailForm').classList.add('hidden');
-                    document.getElementById('otpForm').classList.remove('hidden');
-                    if (resData.debug_otp) {
-                        alert(`[Demo OTP]: ${resData.debug_otp}`);
+            let success = false;
+            let attempts = 0;
+            const maxAttempts = 3;
+
+            while (attempts < maxAttempts && !success) {
+                try {
+                    attempts++;
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 45000); // 45 సెకన్ల టైమ్‌అవుట్ (కోల్డ్ స్టార్ట్ కోసం)
+
+                    const response = await fetch('https://smghfbot.onrender.com/send-otp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email }),
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    const resData = await response.json();
+                    
+                    if (resData.success) {
+                        success = true;
+                        document.getElementById('emailForm').classList.add('hidden');
+                        document.getElementById('otpForm').classList.remove('hidden');
+                        if (resData.debug_otp) {
+                            alert(`[Demo OTP]: ${resData.debug_otp}`);
+                        }
+                    } else {
+                        alert("Error: " + resData.message);
+                        break;
                     }
-                } else {
-                    alert("Error: " + resData.message);
+                } (catch err) {
+                    console.warn(`Attempt ${attempts} failed. Retrying...`);
+                    if (attempts >= maxAttempts) {
+                        alert("Server Error! Render server is waking up. Please wait 10 seconds and try again.");
+                    } else {
+                        // మరో 3 సెకన్లు ఆగి మళ్లీ ప్రయత్నిస్తుంది
+                        await new Promise(resolve => setTimeout(resolve, 3000));
+                    }
                 }
-            } catch (err) {
-                console.error(err);
-                alert("Server Error! Check connection.");
-            } finally {
-                btn.innerText = "Send OTP to Email";
             }
+            btn.innerText = "Send OTP to Email";
         }
 
         // Verify OTP Function connected to Render Backend
