@@ -425,27 +425,43 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        let currentOrderSide = 'BUY';
+                let currentOrderSide = 'BUY';
+
+        // మోడల్స్ ఓపెన్ మరియు క్లోజ్ చేయడానికి సేఫ్ ఫంక్షన్లు
+        function openModal(id) { 
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.remove('hidden'); 
+        }
+        
+        function closeModal(id) { 
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.add('hidden'); 
+        }
 
         window.onload = function() {
-            // Load TradingView Chart Widget
-            new TradingView.widget({
-                "autosize": true,
-                "symbol": "NSE:NIFTY",
-                "interval": "5",
-                "timezone": "Asia/Kolkata",
-                "theme": "dark",
-                "style": "1",
-                "locale": "in",
-                "toolbar_bg": "#0f172a",
-                "enable_publishing": false,
-                "hide_side_toolbar": false,
-                "container_id": "tradingview_chart"
-            });
+            try {
+                // Load TradingView Chart Widget safely
+                new TradingView.widget({
+                    "autosize": true,
+                    "symbol": "NSE:NIFTY",
+                    "interval": "5",
+                    "timezone": "Asia/Kolkata",
+                    "theme": "dark",
+                    "style": "1",
+                    "locale": "in",
+                    "toolbar_bg": "#0f172a",
+                    "enable_publishing": false,
+                    "hide_side_toolbar": false,
+                    "container_id": "tradingview_chart"
+                });
+            } catch (err) {
+                console.error("Chart load error:", err);
+            }
 
             // Load saved API Keys
             if(localStorage.getItem('upstox_api_key')) {
-                document.getElementById('apiKeyInput').value = localStorage.getItem('upstox_api_key');
+                const apiKeyInput = document.getElementById('apiKeyInput');
+                if(apiKeyInput) apiKeyInput.value = localStorage.getItem('upstox_api_key');
             }
         };
 
