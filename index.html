@@ -469,8 +469,8 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // Send OTP Function connected to Render Backend
-                async function sendOTP(e) {
+                // Send OTP Function connected to Render Backend
+        async function sendOTP(e) {
             e.preventDefault();
             const email = document.getElementById('userEmail').value;
             const btn = document.getElementById('sendOtpBtn');
@@ -484,15 +484,17 @@
                 });
                 const resData = await response.json();
                 
-                if(resData.success) {
-                    // ఇక్కడ 'getElementById' అని సరిగ్గా ఉండాలి (E క్యాపిటల్)
+                if (resData.success) {
                     document.getElementById('emailForm').classList.add('hidden');
                     document.getElementById('otpForm').classList.remove('hidden');
-                    if(resData.debug_otp) alert(`[Demo OTP]: ${resData.debug_otp}`);
+                    if (resData.debug_otp) {
+                        alert(`[Demo OTP]: ${resData.debug_otp}`);
+                    }
                 } else {
                     alert("Error: " + resData.message);
                 }
-            } catch(err) {
+            } catch (err) {
+                console.error(err);
                 alert("Server Error! Check connection.");
             } finally {
                 btn.innerText = "Send OTP to Email";
